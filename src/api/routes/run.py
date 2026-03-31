@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import numpy as np
 from fastapi import APIRouter, Request
 from pydantic import BaseModel, Field
 
@@ -35,6 +36,46 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
         loop_enabled=payload.loop_enabled,
         cooldown_override_seconds=payload.cooldown_override_seconds,
     )
+
+    if snapshot.status == "running" and snapshot.cycle_id is not None:
+        capture_bridge = getattr(request.app.state, "capture_bridge", None)
+        bridge_enabled = bool(getattr(request.app.state, "bridge_enabled", False))
+        policy_registry = request.app.state.policy_registry
+        settings = request.app.state.settings
+        interval_seconds = max(0.05, float(settings.gw2_runtime_signal_interval_ms) / 1000.0)
+
+        orchestrator.start_runtime_loop(
+            capture_bridge=capture_bridge if bridge_enabled else None,
+            policy_registry=policy_registry,
+            policy_enabled=bool(settings.gw2_runtime_policy_enabled),
+            policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
+            interval_seconds=interval_seconds,
+        )
+
+        if bridge_enabled and capture_bridge is not None:
+            try:
+                frame_capture = capture_bridge.capture()
+                frame = frame_capture.frame
+                brightness = float(np.mean(frame) / 255.0)
+                contrast = float(np.std(frame) / 255.0)
+                state_features = {
+                    "brightness": round(brightness, 4),
+                    "contrast": round(contrast, 4),
+                    "frame_width": frame_capture.width,
+                    "frame_height": frame_capture.height,
+                    "bridge_enabled": 1.0,
+                }
+                orchestrator.emit_runtime_policy_signal(
+                    state_features=state_features,
+                    action_taken="navigate",
+                    reward_proxy=0.4,
+                    terminal=False,
+                )
+            except Exception:
+                orchestrator.seed_policy_signals()
+        else:
+            orchestrator.seed_policy_signals()
+
     return _snapshot_to_response(snapshot)
 
 

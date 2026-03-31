@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     gw2_api_host: str = Field(default="0.0.0.0", alias="GW2_API_HOST")
     gw2_api_port: int = Field(default=8000, alias="GW2_API_PORT")
 
+    gw2_training_auto_retrain_enabled: bool = Field(default=False, alias="GW2_TRAINING_AUTO_RETRAIN_ENABLED")
+    gw2_training_retrain_interval_seconds: int = Field(default=1800, alias="GW2_TRAINING_RETRAIN_INTERVAL_SECONDS")
+    gw2_runtime_policy_enabled: bool = Field(default=False, alias="GW2_RUNTIME_POLICY_ENABLED")
+    gw2_runtime_policy_min_confidence: float = Field(default=0.7, alias="GW2_RUNTIME_POLICY_MIN_CONFIDENCE")
+    gw2_runtime_signal_interval_ms: int = Field(default=1000, alias="GW2_RUNTIME_SIGNAL_INTERVAL_MS")
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

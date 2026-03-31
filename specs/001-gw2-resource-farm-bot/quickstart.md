@@ -205,6 +205,23 @@ Run one-shot retrain and exit:
 gw2bot-retrain-scheduler --data-dir data --once
 ```
 
+Enable in-app automatic retraining in the API process:
+
+```bash
+export GW2_TRAINING_AUTO_RETRAIN_ENABLED=true
+export GW2_TRAINING_RETRAIN_INTERVAL_SECONDS=1800
+docker-compose restart
+```
+
+Enable policy-guided runtime actions from trained artifacts:
+
+```bash
+export GW2_RUNTIME_POLICY_ENABLED=true
+export GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7
+export GW2_RUNTIME_SIGNAL_INTERVAL_MS=500
+docker-compose restart
+```
+
 ## 12. Next Steps
 
 - Review [Operator Runbook](../docs/operations/gw2bot-runbook.md) for production operations

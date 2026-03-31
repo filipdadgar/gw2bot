@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+import threading
+import time
 
 from fastapi import FastAPI
 
@@ -24,6 +26,24 @@ from src.telemetry.event_writer import EventWriter
 from src.telemetry.logger import configure_logging
 
 logger = logging.getLogger(__name__)
+
+
+def _start_auto_retrain_worker(policy_registry: PolicyRegistry, interval_seconds: int) -> None:
+    """Start a daemon worker that retrains policy artifacts at fixed intervals."""
+
+    def _worker() -> None:
+        while True:
+            try:
+                policy_registry.train_latest()
+            except ValueError as exc:
+                if str(exc) != "no_policy_samples":
+                    logger.exception("auto_retrain_failed")
+            except Exception:
+                logger.exception("auto_retrain_failed")
+            time.sleep(interval_seconds)
+
+    thread = threading.Thread(target=_worker, name="gw2bot-auto-retrain", daemon=True)
+    thread.start()
 
 
 def create_app() -> FastAPI:
@@ -60,8 +80,14 @@ def create_app() -> FastAPI:
     control_commands = ControlCommands(farm_cycle_orchestrator)
     policy_registry = PolicyRegistry(storage)
 
+    if settings.gw2_training_auto_retrain_enabled:
+        interval = max(1, settings.gw2_training_retrain_interval_seconds)
+        _start_auto_retrain_worker(policy_registry=policy_registry, interval_seconds=interval)
+        logger.info("Auto-retrain worker enabled (interval=%ss)", interval)
+
     # Store in app state
     app.state.storage = storage
+    app.state.settings = settings
     app.state.route_builder = route_builder
     app.state.discovery_orchestrator = discovery_orchestrator
     app.state.farm_cycle_orchestrator = farm_cycle_orchestrator

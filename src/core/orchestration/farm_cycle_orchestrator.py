@@ -5,6 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+import threading
+import time
+from typing import Any
 from uuid import uuid4
 
 from src.core.orchestration.policy_signal_emitter import PolicySignalEmitter
@@ -32,6 +35,8 @@ class FarmCycleOrchestrator:
         self._discovery = discovery_orchestrator
         self._signal_emitter = PolicySignalEmitter()
         self._signal_store = PolicySignalStore(storage)
+        self._runtime_thread: threading.Thread | None = None
+        self._runtime_stop_event = threading.Event()
         self._snapshot = RunSnapshot(
             cycle_id=None,
             route_id=None,
@@ -89,8 +94,141 @@ class FarmCycleOrchestrator:
             cooldown_applied_seconds=0,
         )
 
-        self._emit_bootstrap_policy_signals(cycle_id=self._snapshot.cycle_id)
         return self._snapshot
+
+    def emit_runtime_policy_signal(
+        self,
+        state_features: dict[str, object],
+        action_taken: str,
+        reward_proxy: float,
+        terminal: bool = False,
+        observation_ref: str | None = None,
+    ) -> None:
+        """Emit a runtime signal for the active cycle, if one exists."""
+
+        cycle_id = self._snapshot.cycle_id
+        if cycle_id is None:
+            return
+
+        signal = self._signal_emitter.emit(
+            cycle_id=cycle_id,
+            step_index=self._snapshot.current_waypoint_index,
+            state_features=state_features,
+            action_taken=action_taken,
+            reward_proxy=reward_proxy,
+            terminal=terminal,
+            observation_ref=observation_ref,
+        )
+        self._signal_store.persist(signal)
+
+    def seed_policy_signals(self) -> None:
+        """Emit deterministic fallback signals when runtime perception is unavailable."""
+
+        self._emit_bootstrap_policy_signals(cycle_id=self._snapshot.cycle_id)
+
+    def start_runtime_loop(
+        self,
+        capture_bridge: Any,
+        policy_registry: Any,
+        policy_enabled: bool,
+        policy_min_confidence: float,
+        interval_seconds: float,
+    ) -> None:
+        """Start a background loop that emits policy signals while run is active."""
+
+        if self._runtime_thread is not None and self._runtime_thread.is_alive():
+            return
+
+        self._runtime_stop_event.clear()
+
+        def _worker() -> None:
+            while not self._runtime_stop_event.is_set():
+                status = self._snapshot.status
+
+                if status == RunState.STOPPING.value:
+                    self.emit_runtime_policy_signal(
+                        state_features={"reason": "operator_stop", "bridge_enabled": 1.0 if capture_bridge else 0.0},
+                        action_taken="stop",
+                        reward_proxy=0.0,
+                        terminal=True,
+                    )
+                    self._snapshot.status = RunState.IDLE.value
+                    break
+
+                if status == RunState.PAUSED.value:
+                    time.sleep(interval_seconds)
+                    continue
+
+                if status != RunState.RUNNING.value:
+                    break
+
+                try:
+                    state_features: dict[str, object]
+                    if capture_bridge is not None:
+                        frame_capture = capture_bridge.capture()
+                        frame = frame_capture.frame
+                        brightness = float(frame.mean() / 255.0)
+                        contrast = float(frame.std() / 255.0)
+                        state_features = {
+                            "brightness": round(brightness, 4),
+                            "contrast": round(contrast, 4),
+                            "frame_width": frame_capture.width,
+                            "frame_height": frame_capture.height,
+                            "bridge_enabled": 1.0,
+                        }
+                    else:
+                        state_features = {
+                            "brightness": 0.5,
+                            "contrast": 0.25,
+                            "frame_width": 0,
+                            "frame_height": 0,
+                            "bridge_enabled": 0.0,
+                        }
+
+                    action_taken = self._select_action(
+                        state_features=state_features,
+                        policy_registry=policy_registry,
+                        policy_enabled=policy_enabled,
+                        policy_min_confidence=policy_min_confidence,
+                    )
+
+                    reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
+                    self.emit_runtime_policy_signal(
+                        state_features=state_features,
+                        action_taken=action_taken,
+                        reward_proxy=reward_proxy,
+                        terminal=False,
+                    )
+                    self._snapshot.current_waypoint_index += 1
+                except Exception:
+                    self.seed_policy_signals()
+
+                time.sleep(interval_seconds)
+
+        self._runtime_thread = threading.Thread(target=_worker, name="gw2bot-runtime-loop", daemon=True)
+        self._runtime_thread.start()
+
+    @staticmethod
+    def _select_action(
+        state_features: dict[str, object],
+        policy_registry: Any,
+        policy_enabled: bool,
+        policy_min_confidence: float,
+    ) -> str:
+        """Choose action from policy when confident, else fallback heuristic."""
+
+        brightness = float(state_features.get("brightness", 0.0))
+        fallback_action = "harvest" if brightness > 0.6 else "navigate"
+
+        if not policy_enabled or not getattr(policy_registry, "has_artifact", lambda: False)():
+            return fallback_action
+
+        recommendation = policy_registry.recommend(state_features=state_features)
+        action = str(recommendation.get("action", fallback_action))
+        confidence = float(recommendation.get("confidence", 0.0))
+        if confidence < policy_min_confidence:
+            return fallback_action
+        return action
 
     def _emit_bootstrap_policy_signals(self, cycle_id: str | None) -> None:
         """Emit deterministic training records until full real loop wiring is in place."""

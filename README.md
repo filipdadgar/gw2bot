@@ -1,7 +1,7 @@
 # GW2 Farming Bot — Project Summary & Current State
 
 **Date**: 31 March 2026  
-**Status**: ✅ Bridge + Training System Implemented (macOS)  
+**Status**: ✅ Core + Training Cross-Platform; Host Bridge Verified on macOS (Windows implemented, Linux pending)  
 **Phase**: Ready for Real Game Integration and Field Validation
 
 ---
@@ -16,11 +16,16 @@
 
 ### ✅ Policy Training and Inference
 - Policy signal dataset parsing from JSONL telemetry
+- Runtime frame-derived policy signals when host bridge capture is available
+- Continuous background runtime signal loop while run state is `running`
 - Offline policy-table training with persisted model artifacts
 - Training endpoint: `POST /v1/training/policy/train`
 - Recommendation endpoint: `POST /v1/training/policy/recommend`
 - Version history endpoint: `GET /v1/training/policy/versions`
 - Scheduled retrain command: `gw2bot-retrain-scheduler --data-dir data --interval-seconds 1800`
+- Optional in-app auto-retrain via env: `GW2_TRAINING_AUTO_RETRAIN_ENABLED=true`
+- Optional runtime policy actions via env: `GW2_RUNTIME_POLICY_ENABLED=true`
+- Runtime policy confidence gate: `GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7`
 
 ### ✅ API & Contracts
 - OpenAPI spec fully defined ([contracts/control-api.openapi.yaml](specs/001-gw2-resource-farm-bot/contracts/control-api.openapi.yaml))
@@ -59,6 +64,10 @@
 - Environment configuration via .env
 - Container health checks
 - Volume mounts for data persistence
+
+**Note**: Core orchestration, API, telemetry, and training are platform-agnostic in Docker. Host bridge capture/input is OS-specific and must be validated per host platform.
+
+**Learning Note**: While a run is active, the runtime loop continuously emits policy signals from host frames when capture is available. If unavailable, the runtime falls back to deterministic seed signals so training APIs remain usable.
 
 ### ✅ Documentation
 - Quickstart guide with copy-paste examples
