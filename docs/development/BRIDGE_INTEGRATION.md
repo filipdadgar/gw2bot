@@ -61,8 +61,9 @@ curl http://127.0.0.1:8000/health
 # Should show: {"status":"ok","host_bridge":"enabled"}
 ```
 
-## Step 3: Permissions Setup (macOS)
+## Step 3: Permissions Setup
 
+**macOS ONLY - Required:**
 Before running the bot, grant accessibility permissions:
 
 ```
@@ -71,6 +72,12 @@ System Preferences
   → Accessibility
   → Add Python and your IDE to the allowed list
 ```
+
+**Windows - Not Required:**
+Windows does NOT require special permissions for screen capture or input automation via pynput.
+
+**Linux - Not Required:**
+Linux does NOT require special permissions (future implementation).
 
 ## Testing Integration
 

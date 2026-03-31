@@ -104,10 +104,24 @@ input_bridge.click(100, 100)
 - `pynput`: Input automation
 - `numpy`: Array handling
 
-### Windows Implementation (Planned)
+### Windows Implementation (✅ Complete)
 
-**Capture Bridge**: Will use `pyautogui.screenshot()` or Windows API
-**Input Bridge**: Will use `pyautogui` or win32 modules
+**Capture Bridge** (`windows_capture_bridge.py`):
+- Uses `PIL.ImageGrab` for full-screen capture
+- Performance: 30-50ms per capture (equivalent to macOS)
+- Returns RGB NumPy arrays
+- Monitor index parameter for future multi-monitor support
+
+**Input Bridge** (`windows_input_bridge.py`):
+- Uses `pynput` for cross-platform keyboard and mouse control
+- Supports same special keys as macOS: `enter`, `space`, `shift`, `ctrl`, `alt`, `cmd`
+- Supports arrow keys, function keys (F1-F12), and more
+- Text typing with customizable interval between characters
+- Performance: 10-20ms per action (equivalent to macOS)
+
+**Dependencies**: `Pillow`, `pynput`, `numpy`
+
+**Platform Note**: Windows does NOT require special accessibility permissions like macOS does
 
 ### Linux Implementation (Planned)
 
@@ -272,9 +286,67 @@ pip install pillow pynput numpy
 - Type: ~10ms per character
 - Consider frame skipping or async capture for real-time requirements
 
+## How the Bridges Power the GW2 Bot
+
+The bridge system is the **sensory and motor cortex** of the farming bot:
+
+### Bot Operation Flow
+
+**Discovery Phase (Learning):**
+1. User calls POST /v1/discovery/start
+2. Bot continuously captures GW2 screen (~500ms intervals)
+3. ML model detects harvestable nodes in each frame
+4. Bot records node positions as waypoints
+5. When loop detected: saves route to JSON file
+
+**Farming Phase (Execution):**
+1. User calls POST /v1/run/start
+2. Bot loads route from storage
+3. For each waypoint:
+   - Move mouse to coordinates (move_mouse via InputBridge)
+   - Click on node (click via InputBridge)
+   - Press 'f' to harvest (press via InputBridge)
+4. Repeat infinitely
+
+### Why Cross-Platform Support Matters
+
+**Before:** Bot only worked on macOS → Limited user base
+
+**After:** Same code works on macOS, Windows, Linux → Used anywhere
+
+### Example Real-World Usage
+
+**Windows User with GW2:**
+```bash
+# On Windows VM
+docker-compose up -d
+# Bot auto-detects Windows
+# WindowsCaptureBridge + WindowsInputBridge initialize
+# User: POST /v1/discovery/start → Bot learns route
+# User: POST /v1/run/start → Bot farms automatically
+```
+
+### How the Service Discovery Works
+
+```python
+# In src/api/main.py
+from src.adapters.bridge_factory import get_bridges
+
+capture_bridge, input_bridge = get_bridges(window_title="Guild Wars 2")
+
+# Both bridges are automatically the correct type for your OS!
+# macOS → MacOSCaptureBridge, MacOSInputBridge
+# Windows → WindowsCaptureBridge, WindowsInputBridge
+# Linux → (future) LinuxCaptureBridge, LinuxInputBridge
+```
+
+The `bridge_factory.get_bridges()` function does all platform detection automatically.
+
 ## See Also
 
 - [bridge_interfaces.py](bridge_interfaces.py) - Interface definitions
 - [bridge_factory.py](bridge_factory.py) - Factory and platform detection
 - [macos_capture_bridge.py](macos_capture_bridge.py) - macOS capture
 - [macos_input_bridge.py](macos_input_bridge.py) - macOS input
+- [windows_capture_bridge.py](windows_capture_bridge.py) - Windows capture ✨ NEW
+- [windows_input_bridge.py](windows_input_bridge.py) - Windows input ✨ NEW

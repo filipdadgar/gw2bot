@@ -5,8 +5,9 @@
 # Install dependencies
 pip install pillow pynput numpy
 
-# macOS: Grant accessibility permissions
+# macOS ONLY: Grant accessibility permissions
 # System Prefs → Security & Privacy → Accessibility → Add Python/IDE
+# (Windows and Linux do NOT require this permission)
 ```
 
 ## Import & Initialize
