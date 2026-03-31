@@ -49,6 +49,111 @@ Expected response (idle state):
 
 ## Operational Workflows
 
+### Scenario Playbooks (Step-by-Step)
+
+#### Scenario 1: First-Time Start (No Data Yet)
+
+1. Start GW2 on the host and keep the game window visible.
+2. Start the stack:
+
+```bash
+docker-compose up -d
+```
+
+3. Check current run state:
+
+```bash
+curl http://127.0.0.1:8000/v1/run/status
+```
+
+4. If status is not `running`, start discovery-first run:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/run/start \
+  -H "Content-Type: application/json" \
+  -d '{"auto_discover_if_missing":true,"loop_enabled":true}'
+```
+
+5. Confirm route discovery created reusable routes:
+
+```bash
+curl http://127.0.0.1:8000/v1/routes
+```
+
+6. Watch logs during initial cycle:
+
+```bash
+docker-compose logs -f
+```
+
+#### Scenario 2: Data Has Been Gathered (Train and Validate)
+
+1. Train policy from collected signals:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/training/policy/train
+```
+
+2. Verify model versions:
+
+```bash
+curl http://127.0.0.1:8000/v1/training/policy/versions
+```
+
+3. Validate recommendation API:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/training/policy/recommend \
+  -H "Content-Type: application/json" \
+  -d '{"state_features":{"distance":0.22,"confidence":0.91,"rarity":0.8}}'
+```
+
+4. Confirm active run state:
+
+```bash
+curl http://127.0.0.1:8000/v1/run/status
+```
+
+#### Scenario 3: Auto Play by Bot (Mission Mode)
+
+Mission defaults enable run autostart, runtime policy, and in-app auto-retraining.
+
+1. Start stack:
+
+```bash
+docker-compose up -d
+```
+
+2. Confirm run started automatically:
+
+```bash
+curl http://127.0.0.1:8000/v1/run/status
+```
+
+Expected: `status` becomes `running` after startup stabilization.
+
+3. Verify training artifacts update over time:
+
+```bash
+curl http://127.0.0.1:8000/v1/training/policy/versions
+```
+
+4. Monitor runtime and retraining loop:
+
+```bash
+docker-compose logs -f
+```
+
+5. Manual operator controls (if needed):
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/run/pause
+curl -X POST http://127.0.0.1:8000/v1/run/resume
+curl -X POST http://127.0.0.1:8000/v1/run/stop
+```
+
+Note: If host capture/input is unavailable, mission mode still produces fallback signals and training artifacts, but real-game automation quality depends on host bridge health.
+
 ### Workflow: Start Discovery and Farming Loop
 
 Discovery-first means the bot finds a viable route automatically on first run.
@@ -192,6 +297,19 @@ data/telemetry/
   ├── event-log-*.jsonl
   └── cycle-summaries*.jsonl
 ```
+
+### Repository Hygiene
+
+Some runtime artifacts are intentionally ignored in git so normal operations do
+not pollute repository status:
+
+- `data/routes/route-*.json`
+- `data/telemetry/policy-signals.jsonl`
+- `data/telemetry/event-log*.jsonl`
+- `data/telemetry/cycle-summaries*.jsonl`
+
+These files are still persisted on disk and used by the bot at runtime; they
+are simply excluded from version control.
 
 ## Monitoring and Metrics
 

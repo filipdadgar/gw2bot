@@ -33,6 +33,118 @@ Response (idle state):
 }
 ```
 
+## 2A. Scenario Playbooks (Step-by-Step)
+
+Use the playbook that matches your current stage.
+
+### Scenario 1: First-Time Start (No Data Yet)
+
+1. Start GW2 on the host and keep the game window visible.
+2. Start the bot stack:
+
+```bash
+docker-compose up -d
+```
+
+3. Check current run state:
+
+```bash
+curl http://127.0.0.1:8000/v1/run/status
+```
+
+4. If status is not `running`, start a run (discovery-first):
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/run/start \
+  -H "Content-Type: application/json" \
+  -d '{"auto_discover_if_missing":true,"loop_enabled":true}'
+```
+
+5. Confirm route discovery happened:
+
+```bash
+curl http://127.0.0.1:8000/v1/routes
+```
+
+6. Check logs while first loop runs:
+
+```bash
+docker-compose logs -f
+```
+
+### Scenario 2: Data Has Been Gathered (Train/Validate Model State)
+
+1. Trigger policy training from collected signals:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/training/policy/train
+```
+
+2. Verify policy versions and latest model id:
+
+```bash
+curl http://127.0.0.1:8000/v1/training/policy/versions
+```
+
+3. Query one recommendation to sanity-check model serving:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/training/policy/recommend \
+  -H "Content-Type: application/json" \
+  -d '{"state_features":{"distance":0.22,"confidence":0.91,"rarity":0.8}}'
+```
+
+4. Check active run state:
+
+```bash
+curl http://127.0.0.1:8000/v1/run/status
+```
+
+### Scenario 3: Auto Play by Bot (Mission Mode)
+
+Mission defaults in `.env` already enable:
+1. Run autostart
+2. Runtime policy actions
+3. Continuous in-app retraining
+
+Step-by-step:
+
+1. Ensure Compose stack is running:
+
+```bash
+docker-compose up -d
+```
+
+2. Verify bot is running automatically:
+
+```bash
+curl http://127.0.0.1:8000/v1/run/status
+```
+
+Expected: `status` is `running` after startup stabilization.
+
+3. Verify training artifacts exist and update over time:
+
+```bash
+curl http://127.0.0.1:8000/v1/training/policy/versions
+```
+
+4. Observe runtime behavior and retraining loop:
+
+```bash
+docker-compose logs -f
+```
+
+5. Operator control calls (if needed):
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/run/pause
+curl -X POST http://127.0.0.1:8000/v1/run/resume
+curl -X POST http://127.0.0.1:8000/v1/run/stop
+```
+
+Note: If host capture/input is unavailable, mission mode still runs with fallback signal generation, but full real-game automation quality depends on host bridge health.
+
 ## 3. Start Farming (Discovery-First)
 
 The bot auto-discovers a viable route on first run:
@@ -221,6 +333,17 @@ export GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7
 export GW2_RUNTIME_SIGNAL_INTERVAL_MS=500
 docker-compose restart
 ```
+
+
+## Mission Mode (Zero-Touch)
+
+With mission defaults in `.env` on a supported host bridge setup (including Windows),
+`docker-compose up -d` will:
+
+1. Auto-start a run
+2. Continuously emit policy signals while running
+3. Retrain policy artifacts on a repeating interval
+4. Apply learned policy actions at runtime (confidence-gated)
 
 Record manual demonstration steps and train on them:
 

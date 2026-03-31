@@ -165,6 +165,10 @@ recommendations for valid state input.
   recommendation from the latest trained policy.
 - **FR-017**: System MUST emit policy signals during active cycles so training
   data collection happens without manual post-processing.
+- **FR-018**: System MUST support a zero-touch mission mode on supported host
+  platforms (including Windows) where, after container startup with mission
+  defaults, the bot auto-starts a run and performs continuous policy retraining
+  and runtime policy application without manual training API calls.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -230,6 +234,9 @@ recommendations for valid state input.
   signals in under 30 seconds for a 10,000-sample dataset on reference hardware.
 - **SC-012**: Recommendation endpoint returns a valid action in under 100 ms for
   at least 95% of requests in local integration tests.
+- **SC-013**: In mission mode on a Windows host, starting Docker Compose with a
+  running game client begins autonomous signal collection and periodic policy
+  retraining within 5 minutes with no manual training endpoint invocation.
 
 ## Assumptions
 

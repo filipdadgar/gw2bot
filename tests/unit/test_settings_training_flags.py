@@ -23,3 +23,12 @@ def test_runtime_policy_settings(monkeypatch) -> None:
     assert settings.gw2_runtime_policy_enabled is True
     assert settings.gw2_runtime_policy_min_confidence == 0.8
     assert settings.gw2_runtime_signal_interval_ms == 250
+
+
+def test_autostart_run_settings(monkeypatch) -> None:
+    monkeypatch.setenv("GW2_AUTOSTART_RUN_ENABLED", "true")
+    get_settings.cache_clear()
+
+    settings = get_settings()
+
+    assert settings.gw2_autostart_run_enabled is True

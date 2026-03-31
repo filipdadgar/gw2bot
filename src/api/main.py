@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 import logging
 import threading
 import time
@@ -50,13 +51,45 @@ def _start_auto_retrain_worker(policy_registry: PolicyRegistry, interval_seconds
     thread.start()
 
 
+def _startup_autostart_run(app: FastAPI) -> None:
+    if not bool(app.state.settings.gw2_autostart_run_enabled):
+        return
+
+    orchestrator = app.state.farm_cycle_orchestrator
+    snapshot = orchestrator.start(route_id=None, auto_discover_if_missing=True)
+    if snapshot.status != "running":
+        logger.warning("Mission autostart requested but run could not start: %s", snapshot.last_error)
+        return
+
+    settings = app.state.settings
+    interval_seconds = max(0.05, float(settings.gw2_runtime_signal_interval_ms) / 1000.0)
+    capture_bridge = app.state.capture_bridge if bool(app.state.bridge_enabled) else None
+    orchestrator.start_runtime_loop(
+        capture_bridge=capture_bridge,
+        policy_registry=app.state.policy_registry,
+        policy_enabled=bool(settings.gw2_runtime_policy_enabled),
+        policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
+        interval_seconds=interval_seconds,
+    )
+
+    if capture_bridge is None:
+        orchestrator.seed_policy_signals()
+
+    logger.info("Mission mode autostart enabled: run started automatically")
+
+
 def create_app() -> FastAPI:
     """Create the API app used by local runtime control endpoints."""
 
     settings = get_settings()
     configure_logging()
 
-    app = FastAPI(title="GW2 Bot Control API", version="0.1.0")
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        _startup_autostart_run(app)
+        yield
+
+    app = FastAPI(title="GW2 Bot Control API", version="0.1.0", lifespan=lifespan)
 
     # Initialize host bridges for screen capture and input automation
     try:

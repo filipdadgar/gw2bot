@@ -167,6 +167,7 @@
 - [X] T074 [US4] Add scheduled retraining command entry point
 - [X] T075 [US4] Add manual demonstration capture APIs and persistence wiring
 - [X] T076 [US4] Add contract tests for demonstration recording workflow
+- [X] T077 [US4] Add mission-mode autostart defaults for continuous training and finetuning on Docker hosts
 
 ---
 

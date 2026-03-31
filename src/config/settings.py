@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     gw2_runtime_policy_min_confidence: float = Field(default=0.7, alias="GW2_RUNTIME_POLICY_MIN_CONFIDENCE")
     gw2_runtime_signal_interval_ms: int = Field(default=1000, alias="GW2_RUNTIME_SIGNAL_INTERVAL_MS")
     gw2_demo_auto_capture_enabled: bool = Field(default=False, alias="GW2_DEMO_AUTO_CAPTURE_ENABLED")
+    gw2_autostart_run_enabled: bool = Field(default=False, alias="GW2_AUTOSTART_RUN_ENABLED")
 
 
 @lru_cache(maxsize=1)

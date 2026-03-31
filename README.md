@@ -23,9 +23,10 @@
 - Recommendation endpoint: `POST /v1/training/policy/recommend`
 - Version history endpoint: `GET /v1/training/policy/versions`
 - Scheduled retrain command: `gw2bot-retrain-scheduler --data-dir data --interval-seconds 1800`
-- Optional in-app auto-retrain via env: `GW2_TRAINING_AUTO_RETRAIN_ENABLED=true`
-- Optional runtime policy actions via env: `GW2_RUNTIME_POLICY_ENABLED=true`
+- In-app auto-retrain is enabled by mission defaults (`GW2_TRAINING_AUTO_RETRAIN_ENABLED=true`)
+- Runtime policy actions are enabled by mission defaults (`GW2_RUNTIME_POLICY_ENABLED=true`)
 - Runtime policy confidence gate: `GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7`
+- Mission-mode autostart run is enabled by default (`GW2_AUTOSTART_RUN_ENABLED=true`)
 - Manual demonstration capture API: `/v1/training/demonstrations/start|record|stop`
 - Optional host input auto-capture for demos: `GW2_DEMO_AUTO_CAPTURE_ENABLED=true`
 
@@ -71,10 +72,13 @@
 
 **Learning Note**: While a run is active, the runtime loop continuously emits policy signals from host frames when capture is available. If unavailable, the runtime falls back to deterministic seed signals so training APIs remain usable.
 
+**Mission Mode Note (Windows + Docker)**: With the default `.env` mission settings, starting Compose automatically starts a farm run, collects policy signals continuously, and retrains policy artifacts on a fixed schedule. No manual training endpoint calls are required for ongoing finetuning.
+
 **Manual Learning Note**: You can record your own operator actions as labeled demonstration data, then call policy training to include those samples in subsequent models.
 
 ### ✅ Documentation
 - Quickstart guide with copy-paste examples
+- Scenario-based step-by-step playbooks (first start, train after data, mission auto-play)
 - Operator runbook with troubleshooting
 - API OpenAPI spec
 - Data model and entity schemas
