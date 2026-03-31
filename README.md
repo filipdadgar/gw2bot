@@ -6,6 +6,21 @@
 
 ---
 
+## Mission
+
+Run GW2 automation as a zero-touch learning system on your own machine:
+
+- Start GW2 and Docker Compose
+- Auto-start farming runs
+- Collect policy signals continuously
+- Retrain policy artifacts on schedule
+- Apply learned policy actions at runtime with confidence gating
+
+Mission mode is enabled by default through environment settings and is designed
+to reduce manual API intervention during normal operation.
+
+---
+
 ## What's Complete
 
 ### ✅ Orchestration & Control Flow

@@ -1,6 +1,6 @@
 # Implementation Plan: Modular GW2 Resource Farming Bot
 
-**Branch**: `001-gw2-resource-farm-bot` | **Date**: 2026-03-30 | **Spec**: `/specs/001-gw2-resource-farm-bot/spec.md`
+**Branch**: `main` | **Date**: 2026-03-30 | **Spec**: `/specs/001-gw2-resource-farm-bot/spec.md`
 **Input**: Feature specification from `/specs/001-gw2-resource-farm-bot/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.

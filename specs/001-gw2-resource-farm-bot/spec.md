@@ -1,6 +1,6 @@
 # Feature Specification: Modular GW2 Resource Farming Bot
 
-**Feature Branch**: `001-gw2-resource-farm-bot`  
+**Branch**: `main`  
 **Created**: 2026-03-30  
 **Status**: Draft  
 **Input**: User description: "Build a modular bot that can automatically farm resource nodes in Guild Wars 2 using screen-based detection, route navigation, and input automation. The system should be extensible to support reinforcement learning in later phases."
