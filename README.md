@@ -90,11 +90,11 @@
 ## What's NOT Complete (Next Phase)
 
 ### ✅ Host Bridge Implementation
-- **Frame Capture**: ✅ Cross-platform screen capture (macOS, Windows planned, Linux planned)
+- **Frame Capture**: ✅ Cross-platform screen capture (macOS, Windows implemented; Linux pending)
 - **Input Automation**: ✅ Cross-platform mouse/keyboard control
 - **Window Management**: ✅ Window detection and focus (platform-aware)
 
-**Status**: Full implementation complete for macOS with platform factory pattern.  
+**Status**: Implemented for macOS and Windows with platform factory pattern; Linux bridge is pending.  
 **Docs**: [src/adapters/BRIDGE_README.md](src/adapters/BRIDGE_README.md) | [src/adapters/BRIDGE_CONFIG.md](src/adapters/BRIDGE_CONFIG.md)
 
 ### ❌ Real Game Integration
@@ -188,7 +188,7 @@ docker-compose down
 │  │  CaptureBridge       │  │  InputBridge         │         │
 │  │  (frame capture)     │  │  (mouse/keyboard)    │         │
 │  │  ✅ macOS impl       │  │  ✅ macOS impl       │         │
-│  │  📋 Windows planned  │  │  📋 Windows planned  │         │
+│  │  ✅ Windows impl     │  │  ✅ Windows impl     │         │
 │  │  📋 Linux planned    │  │  📋 Linux planned    │         │
 │  └──────────────────────┘  └──────────────────────┘         │
 └─────────────────┬───────────────────────────────────────────┘
@@ -255,9 +255,9 @@ CycleSummaryService aggregates metrics
 ## What Comes Next
 
 ### Immediate (Week 1-2)
-1. **Implement Host Bridge** for your target platform:
-   - Start with frame capture (lower risk)
-   - Then input automation
+1. **Validate Host Bridge** for your target platform:
+       - Verify frame capture against live GW2 window
+       - Verify input routing reliability under sustained runs
    - See [bridge-implementation-guide.md](docs/development/bridge-implementation-guide.md)
 
 2. **Platform-Specific Testing**:
@@ -294,7 +294,7 @@ docker-compose up -d
 
 ### Production
 1. Set `GW2_HOST_BRIDGE_ENABLED=true` in `.env`
-2. Verify real bridge implementations working
+2. Verify bridge behavior on your host setup (window focus, capture, input)
 3. Run performance validation tests
 4. Deploy updated container
 5. Monitor logs for bridge failures
@@ -319,12 +319,12 @@ docker-compose up -d
 ## Questions?
 
 - **How do I run the bot right now?** → See "Running the Bot Right Now" above
-- **Can I use it with real GW2?** → Not yet; bridge implementation needed
-- **What needs to happen next?** → Implement host bridge (capture + input automation)
+- **Can I use it with real GW2?** → Yes on macOS/Windows where host bridge permissions and focus are correctly configured; Linux bridge is still pending.
+- **What needs to happen next?** → Complete Linux bridge and do broader field validation with live gameplay.
 - **Is the API stable?** → Yes; fully tested and OpenAPI-documented
 - **Can I add custom detection logic?** → Yes; implement `NodeDetector` subclass
 - **How do I monitor performance?** → Check telemetry summaries and performance benchmarks in tests
 
 ---
 
-**Status**: Ready for bridge development. All orchestration, API, and testing complete.
+**Status**: Ready for live host validation on macOS/Windows and Linux bridge completion.
