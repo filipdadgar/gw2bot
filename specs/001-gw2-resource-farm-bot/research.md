@@ -69,3 +69,10 @@
 - Alternatives considered:
   - Require manual route files: rejected by feature requirement.
   - Pure random walk each cycle: rejected due to unstable throughput and inconsistent cooldown loops.
+
+## Decision 11: Offline policy-table training for deterministic first release
+- Decision: Train a persisted policy-table artifact from JSONL policy signals using state-hash/action reward aggregation and expose recommendation through a FastAPI endpoint.
+- Rationale: Deterministic offline training is easy to audit, fast to retrain, and avoids introducing heavy RL runtime dependencies before real-game data quality is proven.
+- Alternatives considered:
+  - Immediate on-policy PPO training in production runtime: rejected due to instability risk and higher operational complexity.
+  - No inference endpoint and file-only exports: rejected because operators cannot validate learned behavior without custom tooling.

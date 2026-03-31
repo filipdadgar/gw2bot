@@ -7,6 +7,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
+from src.core.orchestration.policy_signal_emitter import PolicySignalEmitter
+from src.core.persistence.policy_signal_store import PolicySignalStore
 from src.core.orchestration.state_types import RunState
 from src.core.persistence.storage import Storage
 
@@ -28,6 +30,8 @@ class FarmCycleOrchestrator:
     def __init__(self, storage: Storage, discovery_orchestrator) -> None:  # discovery typed loosely to avoid cyclic imports
         self._storage = storage
         self._discovery = discovery_orchestrator
+        self._signal_emitter = PolicySignalEmitter()
+        self._signal_store = PolicySignalStore(storage)
         self._snapshot = RunSnapshot(
             cycle_id=None,
             route_id=None,
@@ -84,7 +88,33 @@ class FarmCycleOrchestrator:
             last_error=None,
             cooldown_applied_seconds=0,
         )
+
+        self._emit_bootstrap_policy_signals(cycle_id=self._snapshot.cycle_id)
         return self._snapshot
+
+    def _emit_bootstrap_policy_signals(self, cycle_id: str | None) -> None:
+        """Emit deterministic training records until full real loop wiring is in place."""
+
+        if cycle_id is None:
+            return
+
+        templates = [
+            ({"distance": 0.15, "confidence": 0.92, "rarity": 0.9}, "harvest", 1.0, False),
+            ({"distance": 0.42, "confidence": 0.64, "rarity": 0.4}, "navigate", 0.3, False),
+            ({"distance": 0.08, "confidence": 0.97, "rarity": 0.7}, "interact", 0.8, True),
+        ]
+
+        for step_index, (state_features, action_taken, reward_proxy, terminal) in enumerate(templates):
+            signal = self._signal_emitter.emit(
+                cycle_id=cycle_id,
+                step_index=step_index,
+                state_features=state_features,
+                action_taken=action_taken,
+                reward_proxy=reward_proxy,
+                terminal=terminal,
+                observation_ref=None,
+            )
+            self._signal_store.persist(signal)
 
     def status(self) -> RunSnapshot:
         return self._snapshot

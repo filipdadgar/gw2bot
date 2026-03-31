@@ -150,7 +150,62 @@ See [Operator Runbook](../docs/operations/gw2bot-runbook.md) for detailed troubl
 - Containers running: `docker-compose ps`
 - Logs: `docker-compose logs -f`
 
-## 11. Next Steps
+## 11. Train and Query Policy
+
+After at least one cycle, train a policy artifact from emitted policy signals:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/training/policy/train
+```
+
+Example response:
+```json
+{
+  "model_id": "policy-4f29df7f",
+  "sample_count": 240,
+  "action_count": 3,
+  "default_action": "navigate",
+  "artifact_path": "data/models/policy-latest.json",
+  "trained_at_utc": "2026-03-31T11:20:00+00:00"
+}
+```
+
+Query recommendation from the latest trained policy:
+
+```bash
+curl -X POST http://127.0.0.1:8000/v1/training/policy/recommend \
+  -H "Content-Type: application/json" \
+  -d '{"state_features":{"distance":0.22,"confidence":0.91,"rarity":0.8}}'
+```
+
+Example response:
+```json
+{
+  "action": "harvest",
+  "confidence": 0.76,
+  "model_id": "policy-4f29df7f"
+}
+```
+
+List trained model versions:
+
+```bash
+curl http://127.0.0.1:8000/v1/training/policy/versions
+```
+
+Run scheduled retraining as a command:
+
+```bash
+gw2bot-retrain-scheduler --data-dir data --interval-seconds 1800
+```
+
+Run one-shot retrain and exit:
+
+```bash
+gw2bot-retrain-scheduler --data-dir data --once
+```
+
+## 12. Next Steps
 
 - Review [Operator Runbook](../docs/operations/gw2bot-runbook.md) for production operations
 - Explore [Data Model](data-model.md) for full schema reference

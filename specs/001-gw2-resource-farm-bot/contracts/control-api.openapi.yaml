@@ -164,6 +164,57 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /v1/training/policy/train:
+    post:
+      summary: Train policy artifact from collected signals
+      operationId: trainPolicy
+      responses:
+        '200':
+          description: Training complete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyTrainResponse'
+        '409':
+          description: No policy signals available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/training/policy/recommend:
+    post:
+      summary: Recommend action from trained policy
+      operationId: recommendPolicyAction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyRecommendRequest'
+      responses:
+        '200':
+          description: Recommendation generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyRecommendResponse'
+        '404':
+          description: No trained policy available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/training/policy/versions:
+    get:
+      summary: List trained policy versions
+      operationId: listPolicyVersions
+      responses:
+        '200':
+          description: Policy versions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyVersionsResponse'
 components:
   schemas:
     RunStatus:
@@ -258,6 +309,69 @@ components:
           type: integer
           minimum: 0
       required: [route_id, name, waypoint_count, cooldown_seconds]
+    PolicyTrainResponse:
+      type: object
+      properties:
+        model_id:
+          type: string
+        sample_count:
+          type: integer
+          minimum: 1
+        action_count:
+          type: integer
+          minimum: 1
+        default_action:
+          type: string
+        artifact_path:
+          type: string
+        trained_at_utc:
+          type: string
+          format: date-time
+      required: [model_id, sample_count, action_count, default_action, artifact_path, trained_at_utc]
+    PolicyRecommendRequest:
+      type: object
+      properties:
+        state_features:
+          type: object
+          additionalProperties: true
+      required: [state_features]
+    PolicyRecommendResponse:
+      type: object
+      properties:
+        action:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        model_id:
+          type: string
+      required: [action, confidence, model_id]
+    PolicyVersion:
+      type: object
+      properties:
+        model_id:
+          type: string
+        trained_at_utc:
+          type: string
+          format: date-time
+        sample_count:
+          type: integer
+          minimum: 0
+        artifact_path:
+          type: string
+      required: [model_id, trained_at_utc, sample_count, artifact_path]
+    PolicyVersionsResponse:
+      type: object
+      properties:
+        latest_model_id:
+          type: string
+          nullable: true
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyVersion'
+      required: [latest_model_id, versions]
     CycleSummary:
       type: object
       properties:

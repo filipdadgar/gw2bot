@@ -30,6 +30,9 @@ dev = [
   "mypy>=1.10.0,<2.0.0",
 ]
 
+[project.scripts]
+gw2bot-retrain-scheduler = "src.cli.retrain_scheduler:main"
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 addopts = "-q"

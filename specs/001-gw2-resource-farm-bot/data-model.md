@@ -150,3 +150,20 @@
 - Validation Rules:
   - terminal=true requires cycle state completed/stopped/error at or after same step.
   - action_taken must come from the controlled action vocabulary.
+
+## Entity: PolicyArtifact
+- Purpose: Versioned policy model metadata and persisted recommendation table.
+- Fields:
+  - model_id (string, required, unique)
+  - artifact_path (string, required)
+  - source_signal_path (string, required)
+  - sample_count (integer, required, min 1)
+  - action_count (integer, required, min 1)
+  - default_action (string, required)
+  - trained_at_utc (string, required, ISO-8601)
+  - metadata (object, optional)
+- Relationships:
+  - PolicyArtifact 1..* PolicySignal (training input)
+- Validation Rules:
+  - artifact_path must exist after successful training.
+  - default_action must be in the action vocabulary exported with the model.

@@ -140,6 +140,34 @@
 
 ---
 
+## Phase 7: User Story 4 - Train and Serve Learned Policy (Priority: P2)
+
+**Goal**: Train a persisted policy artifact from collected signals and expose runtime recommendation.
+
+**Independent Test**: Collect policy signals, train model artifact, and request recommendations from API.
+
+### Tests for User Story 4 (REQUIRED)
+
+- [X] T061 [P] [US4] Add contract tests for training endpoints in tests/contract/test_training_api.py
+- [X] T062 [P] [US4] Add integration test for end-to-end training workflow in tests/integration/test_policy_training_workflow.py
+- [X] T063 [P] [US4] Add unit tests for policy signal dataset parsing in tests/unit/test_policy_signal_dataset.py
+- [X] T064 [P] [US4] Add unit tests for policy trainer aggregation and inference in tests/unit/test_policy_trainer.py
+
+### Implementation for User Story 4
+
+- [X] T065 [P] [US4] Implement policy signal dataset loader in src/core/training/policy_signal_dataset.py
+- [X] T066 [P] [US4] Implement policy artifact trainer and serializer in src/core/training/policy_trainer.py
+- [X] T067 [P] [US4] Implement policy model registry for latest artifact loading in src/core/training/policy_registry.py
+- [X] T068 [US4] Integrate policy signal emission and persistence into run loop in src/core/orchestration/farm_cycle_orchestrator.py
+- [X] T069 [US4] Add training API routes for train and recommend in src/api/routes/training.py
+- [X] T070 [US4] Wire training services into app factory in src/api/main.py
+- [X] T071 [US4] Update quickstart and README with training workflow usage
+- [X] T072 [US4] Update validation report for completed training phase
+- [X] T073 [US4] Add policy version history endpoint and registry support
+- [X] T074 [US4] Add scheduled retraining command entry point
+
+---
+
 ## Dependencies and Execution Order
 
 ### Phase Dependencies

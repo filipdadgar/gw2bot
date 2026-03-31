@@ -268,13 +268,13 @@ Real deployment: 2-hour manual soak validated
 ### Current MVP Scope
 1. **Single Game Client**: Supports one local GW2 instance per host
 2. **Single Route**: One active farming route per run (multiple routes stored, one active)
-3. **No RL Training**: Policy signals exported; RL phase deferred to v2
+3. **Offline Policy Training**: JSONL policy signals can be trained into a persisted recommendation artifact
 4. **Synthetic Benchmarks**: Performance tests use synthetic data; real latency depends on host hardware
 
 ### Future Enhancements (Out of Scope)
 1. **Multi-Game Support**: Run multiple GW2 instances simultaneously
 2. **Route Optimization**: Auto-learn route efficiency over time
-3. **RL Integration**: Stable-Baselines3 policy training on collected signals
+3. **Advanced RL Integration**: On-policy Stable-Baselines3 training and online fine-tuning
 4. **Advanced Resilience**: Multi-bridge redundancy, fallback strategies
 5. **Performance Optimization**: GPU acceleration for detection
 

@@ -87,6 +87,32 @@ node targeting order changes according to configured prioritization rules.
 
 ---
 
+### User Story 4 - Train and Serve Learned Policy (Priority: P2)
+
+As an operator, I can train a policy artifact from collected run signals and use
+it for runtime action recommendations so model-guided prioritization can be
+validated in production-like runs.
+
+**Why this priority**: The project already emits policy signals; without a
+training and inference path those signals cannot improve behavior.
+
+**Independent Test**: Generate policy signals from one or more runs, trigger
+training, and verify a model artifact is produced and can return deterministic
+recommendations for valid state input.
+
+**Acceptance Scenarios**:
+
+1. **Given** collected policy signals are present, **When** training is
+  requested, **Then** the system creates a persisted policy artifact with
+  metadata about samples and actions.
+2. **Given** a trained policy exists, **When** a state feature payload is
+  submitted for recommendation, **Then** the system returns an action and
+  confidence score without requiring retraining.
+3. **Given** no trained policy exists, **When** recommendation is requested,
+  **Then** the system responds with a clear, stable error code.
+
+---
+
 ### Edge Cases
 
 - What happens when no harvestable nodes are detected for an entire route loop?
@@ -126,10 +152,19 @@ node targeting order changes according to configured prioritization rules.
   enhancement.
 - **FR-012**: System MUST expose run-state and action outcome signals in a
   consistent format suitable for future reinforcement-learning driven policies,
-  without requiring RL training in this phase.
+  and support training in this phase.
 - **FR-013**: System MUST run inside Docker to isolate dependencies while
   interacting with the local game client through explicitly configured
   host-bridge capture and input channels on the same machine.
+- **FR-014**: System MUST persist policy training records and artifacts in the
+  configured data directory with reproducible metadata (sample count, action
+  vocabulary, training timestamp).
+- **FR-015**: System MUST provide an API endpoint to trigger offline policy
+  training from collected policy signals.
+- **FR-016**: System MUST provide an API endpoint to request action
+  recommendation from the latest trained policy.
+- **FR-017**: System MUST emit policy signals during active cycles so training
+  data collection happens without manual post-processing.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -191,6 +226,10 @@ node targeting order changes according to configured prioritization rules.
   commands through host bridge channels with no unrecoverable bridge failures
   during a 2-hour soak test and recovers transient bridge disconnects within 3
   seconds.
+- **SC-011**: Training endpoint produces a policy artifact from collected
+  signals in under 30 seconds for a 10,000-sample dataset on reference hardware.
+- **SC-012**: Recommendation endpoint returns a valid action in under 100 ms for
+  at least 95% of requests in local integration tests.
 
 ## Assumptions
 
@@ -202,7 +241,7 @@ node targeting order changes according to configured prioritization rules.
   runtime and persisted after successful cycles.
 - Optional minimap detection and dynamic prioritization are in scope as
   enhancements and may be delivered after MVP route-loop automation.
-- Reinforcement learning is not part of this release; only interfaces required
-  for future RL policy integration are included.
+- Offline policy training and recommendation are in scope for this release
+  using collected policy signals and persisted model artifacts.
 - Logging and telemetry retention follows existing project defaults unless
   overridden by future operational requirements.

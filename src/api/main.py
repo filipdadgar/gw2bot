@@ -11,12 +11,14 @@ from src.api.routes.discovery import router as discovery_router
 from src.api.routes.run import router as run_router
 from src.api.routes.run_control import router as run_control_router
 from src.api.routes.telemetry import router as telemetry_router
+from src.api.routes.training import router as training_router
 from src.config.settings import get_settings
 from src.core.discovery.route_builder import RouteBuilder
 from src.core.orchestration.control_commands import ControlCommands
 from src.core.orchestration.discovery_orchestrator import DiscoveryOrchestrator
 from src.core.orchestration.farm_cycle_orchestrator import FarmCycleOrchestrator
 from src.core.persistence.storage import Storage
+from src.core.training.policy_registry import PolicyRegistry
 from src.telemetry.cycle_summary_service import CycleSummaryService
 from src.telemetry.event_writer import EventWriter
 from src.telemetry.logger import configure_logging
@@ -44,13 +46,19 @@ def create_app() -> FastAPI:
         input_bridge = None
         bridge_enabled = False
 
-    storage = Storage(settings.gw2_data_dir)
+    try:
+        storage = Storage(settings.gw2_data_dir)
+    except OSError as exc:
+        logger.warning("Failed to initialize storage at %s: %s", settings.gw2_data_dir, exc)
+        logger.warning("Falling back to local data directory")
+        storage = Storage("data")
     route_builder = RouteBuilder(storage)
     discovery_orchestrator = DiscoveryOrchestrator(route_builder)
     farm_cycle_orchestrator = FarmCycleOrchestrator(storage, discovery_orchestrator)
     event_writer = EventWriter(storage)
     cycle_summary_service = CycleSummaryService(storage)
     control_commands = ControlCommands(farm_cycle_orchestrator)
+    policy_registry = PolicyRegistry(storage)
 
     # Store in app state
     app.state.storage = storage
@@ -60,6 +68,7 @@ def create_app() -> FastAPI:
     app.state.event_writer = event_writer
     app.state.cycle_summary_service = cycle_summary_service
     app.state.control_commands = control_commands
+    app.state.policy_registry = policy_registry
     app.state.capture_bridge = capture_bridge
     app.state.input_bridge = input_bridge
     app.state.bridge_enabled = bridge_enabled
@@ -68,6 +77,7 @@ def create_app() -> FastAPI:
     app.include_router(run_router)
     app.include_router(run_control_router)
     app.include_router(telemetry_router)
+    app.include_router(training_router)
 
     @app.get("/health")
     def health() -> dict[str, str]:

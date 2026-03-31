@@ -1,8 +1,8 @@
 # GW2 Farming Bot — Project Summary & Current State
 
-**Date**: 1 April 2026  
-**Status**: ✅ Bridge System Implemented (macOS)  
-**Phase**: Ready for Real Game Integration
+**Date**: 31 March 2026  
+**Status**: ✅ Bridge + Training System Implemented (macOS)  
+**Phase**: Ready for Real Game Integration and Field Validation
 
 ---
 
@@ -12,7 +12,15 @@
 - Discovery-first route generation with confidence scoring
 - Farm cycle orchestration with pause/resume/stop semantics
 - Cooldown loop restart with configurable intervals
-- Policy signal emission for future RL integration
+- Policy signal emission integrated into run lifecycle
+
+### ✅ Policy Training and Inference
+- Policy signal dataset parsing from JSONL telemetry
+- Offline policy-table training with persisted model artifacts
+- Training endpoint: `POST /v1/training/policy/train`
+- Recommendation endpoint: `POST /v1/training/policy/recommend`
+- Version history endpoint: `GET /v1/training/policy/versions`
+- Scheduled retrain command: `gw2bot-retrain-scheduler --data-dir data --interval-seconds 1800`
 
 ### ✅ API & Contracts
 - OpenAPI spec fully defined ([contracts/control-api.openapi.yaml](specs/001-gw2-resource-farm-bot/contracts/control-api.openapi.yaml))
@@ -20,6 +28,7 @@
   - Discovery: START, STATUS, STOP
   - Run Lifecycle: START, STATUS, PAUSE, RESUME, STOP
   - Telemetry: GET CYCLE SUMMARY, LIST ROUTES
+  - Training: TRAIN POLICY, RECOMMEND ACTION
 - Contract tests validating all endpoint schemas
 
 ### ✅ Testing
@@ -251,10 +260,10 @@ CycleSummaryService aggregates metrics
    - Iterate on prioritization weights if needed
 
 ### Medium Term (Month 2)
-5. **RL Phase**:
-   - Export collected policy signals
-   - Train Stable-Baselines3 agent on dataset
-   - Integrate RL policy into prioritization
+5. **Policy Quality Upgrades**:
+   - Expand state feature set from live gameplay captures
+   - Benchmark learned policy against baseline prioritization
+   - Promote model refresh cadence with automated validation
 
 ---
 

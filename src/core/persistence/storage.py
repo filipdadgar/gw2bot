@@ -14,8 +14,10 @@ class Storage:
         self._base = Path(data_dir)
         self._routes_dir = self._base / "routes"
         self._telemetry_dir = self._base / "telemetry"
+        self._models_dir = self._base / "models"
         self._routes_dir.mkdir(parents=True, exist_ok=True)
         self._telemetry_dir.mkdir(parents=True, exist_ok=True)
+        self._models_dir.mkdir(parents=True, exist_ok=True)
 
     @property
     def routes_dir(self) -> Path:
@@ -24,6 +26,10 @@ class Storage:
     @property
     def telemetry_dir(self) -> Path:
         return self._telemetry_dir
+
+    @property
+    def models_dir(self) -> Path:
+        return self._models_dir
 
     def write_json(self, target: Path, payload: dict[str, Any]) -> None:
         target.parent.mkdir(parents=True, exist_ok=True)

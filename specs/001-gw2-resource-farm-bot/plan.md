@@ -13,14 +13,14 @@ cooldown loop execution. Run the bot runtime inside Docker for dependency
 isolation while interacting with the local game client on the same host through
 approved host capture/input bridges. Use a layered architecture with separate
 runtime modules for perception, planning, control, and telemetry, expose runtime
-control through a FastAPI service, and preserve future reinforcement learning
-integration through stable state/action/reward signal contracts.
+control through a FastAPI service, and include offline policy training plus
+inference serving using stable state/action/reward signal contracts.
 
 ## Technical Context
 
 **Language/Version**: Python 3.11
 **Primary Dependencies**: OpenCV, Ultralytics YOLOv8, NumPy, PyAutoGUI or pynput, FastAPI
-**Storage**: Docker-mounted local files for discovered route graphs and structured telemetry logs; optional Redis for runtime state caching
+**Storage**: Docker-mounted local files for discovered route graphs, structured telemetry logs, and trained policy artifacts; optional Redis for runtime state caching
 **Testing**: pytest, pytest-mock, contract checks for FastAPI OpenAPI schema, integration simulations for loop control
 **Target Platform**: Docker container on macOS host with Guild Wars 2 client in host foreground window
 **Project Type**: single-project containerized automation service (runtime engine + control API)
@@ -78,7 +78,8 @@ src/
 │   ├── discovery/
 │   ├── navigation/
 │   ├── actions/
-│   └── orchestration/
+│   ├── orchestration/
+│   └── training/
 ├── telemetry/
 ├── config/
 └── adapters/
