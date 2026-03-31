@@ -90,6 +90,17 @@
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
+### Constitution Alignment Requirements *(mandatory)*
+
+- **CAR-001 (Code Quality)**: Define maintainability expectations (module
+  boundaries, readability, and static analysis/linting requirements).
+- **CAR-002 (Testing Standard)**: Define required automated tests for changed
+  behavior, including regression coverage for bug fixes.
+- **CAR-003 (UX Consistency)**: Define user-facing consistency requirements for
+  language, interaction patterns, and error handling.
+- **CAR-004 (Performance)**: Define measurable performance requirements for the
+  impacted critical paths (latency, throughput, and/or resource bounds).
+
 *Example of marking unclear requirements:*
 
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
@@ -113,6 +124,9 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+- **SC-005**: [Code quality outcome, e.g., "No new lint/static-analysis violations in changed files"]
+- **SC-006**: [Testing outcome, e.g., "All new and regression tests pass in CI"]
+- **SC-007**: [Performance outcome, e.g., "p95 latency remains under stated budget"]
 
 ## Assumptions
 

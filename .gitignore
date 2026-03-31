@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Runtime and logs
+*.log
+.env
+.env.local
+.env.*.local
+
+# Runtime-generated bot artifacts
+data/routes/route-*.json
+data/telemetry/policy-signals.jsonl
+data/telemetry/event-log*.jsonl
+data/telemetry/cycle-summaries*.jsonl
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/

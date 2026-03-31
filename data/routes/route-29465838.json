@@ -1,0 +1,17 @@
+{
+  "route_id": "route-29465838",
+  "name": "discovered-route",
+  "source": "discovered",
+  "cooldown_seconds": 30,
+  "waypoints": [
+    {
+      "x": 100,
+      "y": 100
+    },
+    {
+      "x": 220,
+      "y": 220
+    }
+  ],
+  "created_at_utc": "2026-03-31T07:35:30.297791+00:00"
+}
