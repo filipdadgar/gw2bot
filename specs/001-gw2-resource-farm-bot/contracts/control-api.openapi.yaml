@@ -1,0 +1,304 @@
+openapi: 3.0.3
+info:
+  title: GW2 Bot Control API
+  version: 0.1.0
+  description: Local control API for route farming orchestration and telemetry.
+servers:
+  - url: http://127.0.0.1:8000
+paths:
+  /v1/run/start:
+    post:
+      summary: Start a farming run
+      operationId: startRun
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartRunRequest'
+      responses:
+        '202':
+          description: Run accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunStateResponse'
+        '409':
+          description: Run already active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/discovery/start:
+    post:
+      summary: Start route discovery
+      operationId: startDiscovery
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartDiscoveryRequest'
+      responses:
+        '202':
+          description: Discovery accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoveryStateResponse'
+  /v1/discovery/status:
+    get:
+      summary: Get route discovery status
+      operationId: getDiscoveryStatus
+      responses:
+        '200':
+          description: Discovery state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoveryStateResponse'
+  /v1/discovery/stop:
+    post:
+      summary: Stop active route discovery
+      operationId: stopDiscovery
+      responses:
+        '200':
+          description: Discovery stopped
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiscoveryStateResponse'
+  /v1/run/pause:
+    post:
+      summary: Pause active run
+      operationId: pauseRun
+      responses:
+        '200':
+          description: Run paused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunStateResponse'
+        '409':
+          description: Invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/run/resume:
+    post:
+      summary: Resume paused run
+      operationId: resumeRun
+      responses:
+        '200':
+          description: Run resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunStateResponse'
+        '409':
+          description: Invalid state transition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/run/stop:
+    post:
+      summary: Stop current run
+      operationId: stopRun
+      responses:
+        '200':
+          description: Run stopping initiated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunStateResponse'
+  /v1/run/status:
+    get:
+      summary: Get current run status
+      operationId: getStatus
+      responses:
+        '200':
+          description: Current state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RunStateResponse'
+  /v1/routes:
+    get:
+      summary: List available routes
+      operationId: listRoutes
+      responses:
+        '200':
+          description: Route list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  routes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RouteSummary'
+                required: [routes]
+  /v1/telemetry/cycles/{cycleId}/summary:
+    get:
+      summary: Get cycle summary
+      operationId: getCycleSummary
+      parameters:
+        - name: cycleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cycle summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CycleSummary'
+        '404':
+          description: Cycle not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    RunStatus:
+      type: string
+      enum: [idle, running, paused, stopping, error]
+    StartRunRequest:
+      type: object
+      properties:
+        route_id:
+          type: string
+          nullable: true
+        auto_discover_if_missing:
+          type: boolean
+          default: true
+        loop_enabled:
+          type: boolean
+          default: true
+        cooldown_override_seconds:
+          type: integer
+          minimum: 0
+      required: []
+    DiscoveryStatus:
+      type: string
+      enum: [idle, running, completed, failed, stopping]
+    StartDiscoveryRequest:
+      type: object
+      properties:
+        max_duration_seconds:
+          type: integer
+          minimum: 30
+          default: 600
+        min_loop_confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0.7
+    DiscoveryStateResponse:
+      type: object
+      properties:
+        discovery_id:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/DiscoveryStatus'
+        loop_confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          nullable: true
+        generated_route_id:
+          type: string
+          nullable: true
+        last_error:
+          type: string
+          nullable: true
+      required: [status]
+    RunStateResponse:
+      type: object
+      properties:
+        cycle_id:
+          type: string
+          nullable: true
+        route_id:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/RunStatus'
+        current_waypoint_index:
+          type: integer
+          minimum: 0
+        started_at_utc:
+          type: string
+          format: date-time
+          nullable: true
+        last_error:
+          type: string
+          nullable: true
+      required:
+        - status
+        - current_waypoint_index
+    RouteSummary:
+      type: object
+      properties:
+        route_id:
+          type: string
+        name:
+          type: string
+        waypoint_count:
+          type: integer
+          minimum: 0
+        cooldown_seconds:
+          type: integer
+          minimum: 0
+      required: [route_id, name, waypoint_count, cooldown_seconds]
+    CycleSummary:
+      type: object
+      properties:
+        cycle_id:
+          type: string
+        route_id:
+          type: string
+        duration_seconds:
+          type: number
+          minimum: 0
+        detections:
+          type: integer
+          minimum: 0
+        harvest_success_count:
+          type: integer
+          minimum: 0
+        harvest_failure_count:
+          type: integer
+          minimum: 0
+        capture_to_decision_median_ms:
+          type: number
+          minimum: 0
+        capture_to_decision_p95_ms:
+          type: number
+          minimum: 0
+      required:
+        - cycle_id
+        - route_id
+        - duration_seconds
+        - detections
+        - harvest_success_count
+        - harvest_failure_count
+        - capture_to_decision_median_ms
+        - capture_to_decision_p95_ms
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        remediation:
+          type: string
+      required: [code, message]

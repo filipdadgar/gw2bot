@@ -1,0 +1,17 @@
+services:
+  gw2bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      GW2_HOST_BRIDGE_ENABLED: ${GW2_HOST_BRIDGE_ENABLED:-true}
+      GW2_CAPTURE_SOURCE: ${GW2_CAPTURE_SOURCE:-host}
+      GW2_INPUT_SOURCE: ${GW2_INPUT_SOURCE:-host}
+      GW2_DATA_DIR: ${GW2_DATA_DIR:-/app/data}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

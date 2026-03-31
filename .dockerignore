@@ -1,0 +1,25 @@
+# VCS and metadata
+.git/
+.gitignore
+
+# Python and local envs
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build/test artifacts
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+coverage/
+
+# Local runtime data
+.env*
+*.log
+specs/
+.vscode/
+.idea/
