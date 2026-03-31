@@ -108,29 +108,104 @@ class TestMacOSCaptureBridge(unittest.TestCase):
         """Test successful frame capture."""
         from src.adapters.macos_capture_bridge import MacOSCaptureBridge
 
+
+class TestWindowsCaptureBridge(unittest.TestCase):
+    """Tests for Windows capture bridge."""
+
+    @patch("PIL.ImageGrab.grab")
+    def test_capture_succeeds(self, mock_grab):
+        """Test successful frame capture on Windows."""
+        from src.adapters.windows_capture_bridge import WindowsCaptureBridge
+
         # Mock PIL ImageGrab to return a test image
         mock_image = MagicMock()
-        mock_image.size = (1280, 720)
+        mock_image.size = (1920, 1080)
         mock_grab.return_value = mock_image
 
-        with patch("numpy.array", return_value=np.zeros((720, 1280, 3), dtype=np.uint8)):
-            bridge = MacOSCaptureBridge()
+        with patch("numpy.array", return_value=np.zeros((1080, 1920, 3), dtype=np.uint8)):
+            bridge = WindowsCaptureBridge()
             result = bridge.capture()
 
-            assert result.width == 1280
-            assert result.height == 720
-            assert result.frame.shape == (720, 1280, 3)
+            assert result.width == 1920
+            assert result.height == 1080
+            assert result.frame.shape == (1080, 1920, 3)
 
     @patch("PIL.ImageGrab.grab")
     def test_capture_failure(self, mock_grab):
-        """Test capture error handling."""
-        from src.adapters.macos_capture_bridge import MacOSCaptureBridge
+        """Test capture error handling on Windows."""
+        from src.adapters.windows_capture_bridge import WindowsCaptureBridge
 
         mock_grab.side_effect = Exception("Capture failed")
 
-        bridge = MacOSCaptureBridge()
+        bridge = WindowsCaptureBridge()
         with self.assertRaises(Exception):
             bridge.capture()
+
+
+class TestWindowsInputBridge(unittest.TestCase):
+    """Tests for Windows input bridge."""
+
+    @patch("src.adapters.windows_input_bridge.MouseController")
+    @patch("src.adapters.windows_input_bridge.KeyboardController")
+    def test_press_single_char(self, mock_kb_class, mock_mouse_class):
+        """Test pressing a single character key on Windows."""
+        from src.adapters.windows_input_bridge import WindowsInputBridge
+
+        mock_kb = MagicMock()
+        mock_kb_class.return_value = mock_kb
+        mock_mouse_class.return_value = MagicMock()
+
+        bridge = WindowsInputBridge()
+        bridge.press("a")
+
+        mock_kb.press.assert_called_once()
+
+    @patch("src.adapters.windows_input_bridge.MouseController")
+    @patch("src.adapters.windows_input_bridge.KeyboardController")
+    def test_press_special_key(self, mock_kb_class, mock_mouse_class):
+        """Test pressing a special key on Windows."""
+        from src.adapters.windows_input_bridge import WindowsInputBridge
+
+        mock_kb = MagicMock()
+        mock_kb_class.return_value = mock_kb
+        mock_mouse_class.return_value = MagicMock()
+
+        bridge = WindowsInputBridge()
+        bridge.press("enter")
+
+        mock_kb.press.assert_called_once()
+
+    @patch("src.adapters.windows_input_bridge.KeyboardController")
+    @patch("src.adapters.windows_input_bridge.MouseController")
+    def test_click(self, mock_mouse_class, mock_kb_class):
+        """Test mouse click on Windows."""
+        from src.adapters.windows_input_bridge import WindowsInputBridge
+
+        mock_mouse = MagicMock()
+        mock_mouse_class.return_value = mock_mouse
+        mock_kb_class.return_value = MagicMock()
+
+        bridge = WindowsInputBridge()
+        bridge.click(100, 200, button="left")
+
+        # Check that mouse click was called
+        mock_mouse.click.assert_called_once()
+
+    @patch("src.adapters.windows_input_bridge.MouseController")
+    @patch("src.adapters.windows_input_bridge.KeyboardController")
+    def test_type_text(self, mock_kb_class, mock_mouse_class):
+        """Test typing text on Windows."""
+        from src.adapters.windows_input_bridge import WindowsInputBridge
+
+        mock_kb = MagicMock()
+        mock_kb_class.return_value = mock_kb
+        mock_mouse_class.return_value = MagicMock()
+
+        bridge = WindowsInputBridge()
+        bridge.type_text("hello")
+
+        # Should call type for each character (5 times for "hello")
+        assert mock_kb.type.call_count == 5
 
 
 class TestMacOSInputBridge(unittest.TestCase):
