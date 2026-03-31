@@ -222,6 +222,31 @@ export GW2_RUNTIME_SIGNAL_INTERVAL_MS=500
 docker-compose restart
 ```
 
+Record manual demonstration steps and train on them:
+
+```bash
+# Start demo session
+curl -X POST http://127.0.0.1:8000/v1/training/demonstrations/start
+
+# Record one action (repeat while you play)
+curl -X POST http://127.0.0.1:8000/v1/training/demonstrations/record \
+  -H "Content-Type: application/json" \
+  -d '{"action_taken":"harvest","reward_proxy":1.0,"terminal":false}'
+
+# Stop demo session
+curl -X POST http://127.0.0.1:8000/v1/training/demonstrations/stop
+
+# Train new policy including demonstrations
+curl -X POST http://127.0.0.1:8000/v1/training/policy/train
+```
+
+Enable automatic host input capture for demonstration sessions:
+
+```bash
+export GW2_DEMO_AUTO_CAPTURE_ENABLED=true
+docker-compose restart
+```
+
 ## 12. Next Steps
 
 - Review [Operator Runbook](../docs/operations/gw2bot-runbook.md) for production operations

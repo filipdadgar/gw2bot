@@ -26,6 +26,8 @@
 - Optional in-app auto-retrain via env: `GW2_TRAINING_AUTO_RETRAIN_ENABLED=true`
 - Optional runtime policy actions via env: `GW2_RUNTIME_POLICY_ENABLED=true`
 - Runtime policy confidence gate: `GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7`
+- Manual demonstration capture API: `/v1/training/demonstrations/start|record|stop`
+- Optional host input auto-capture for demos: `GW2_DEMO_AUTO_CAPTURE_ENABLED=true`
 
 ### ✅ API & Contracts
 - OpenAPI spec fully defined ([contracts/control-api.openapi.yaml](specs/001-gw2-resource-farm-bot/contracts/control-api.openapi.yaml))
@@ -68,6 +70,8 @@
 **Note**: Core orchestration, API, telemetry, and training are platform-agnostic in Docker. Host bridge capture/input is OS-specific and must be validated per host platform.
 
 **Learning Note**: While a run is active, the runtime loop continuously emits policy signals from host frames when capture is available. If unavailable, the runtime falls back to deterministic seed signals so training APIs remain usable.
+
+**Manual Learning Note**: You can record your own operator actions as labeled demonstration data, then call policy training to include those samples in subsequent models.
 
 ### ✅ Documentation
 - Quickstart guide with copy-paste examples

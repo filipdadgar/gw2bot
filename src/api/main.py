@@ -19,7 +19,11 @@ from src.core.discovery.route_builder import RouteBuilder
 from src.core.orchestration.control_commands import ControlCommands
 from src.core.orchestration.discovery_orchestrator import DiscoveryOrchestrator
 from src.core.orchestration.farm_cycle_orchestrator import FarmCycleOrchestrator
+from src.core.orchestration.policy_signal_emitter import PolicySignalEmitter
+from src.core.persistence.policy_signal_store import PolicySignalStore
 from src.core.persistence.storage import Storage
+from src.core.training.demonstration_recorder import DemonstrationRecorder
+from src.core.training.manual_input_listener import ManualInputListener
 from src.core.training.policy_registry import PolicyRegistry
 from src.telemetry.cycle_summary_service import CycleSummaryService
 from src.telemetry.event_writer import EventWriter
@@ -79,6 +83,13 @@ def create_app() -> FastAPI:
     cycle_summary_service = CycleSummaryService(storage)
     control_commands = ControlCommands(farm_cycle_orchestrator)
     policy_registry = PolicyRegistry(storage)
+    demo_recorder = DemonstrationRecorder(
+        signal_store=PolicySignalStore(storage),
+        signal_emitter=PolicySignalEmitter(),
+        capture_bridge=capture_bridge,
+        bridge_enabled=bridge_enabled,
+    )
+    manual_input_listener = ManualInputListener(demo_recorder)
 
     if settings.gw2_training_auto_retrain_enabled:
         interval = max(1, settings.gw2_training_retrain_interval_seconds)
@@ -95,6 +106,8 @@ def create_app() -> FastAPI:
     app.state.cycle_summary_service = cycle_summary_service
     app.state.control_commands = control_commands
     app.state.policy_registry = policy_registry
+    app.state.demonstration_recorder = demo_recorder
+    app.state.manual_input_listener = manual_input_listener
     app.state.capture_bridge = capture_bridge
     app.state.input_bridge = input_bridge
     app.state.bridge_enabled = bridge_enabled

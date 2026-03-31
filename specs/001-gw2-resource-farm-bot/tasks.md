@@ -165,6 +165,8 @@
 - [X] T072 [US4] Update validation report for completed training phase
 - [X] T073 [US4] Add policy version history endpoint and registry support
 - [X] T074 [US4] Add scheduled retraining command entry point
+- [X] T075 [US4] Add manual demonstration capture APIs and persistence wiring
+- [X] T076 [US4] Add contract tests for demonstration recording workflow
 
 ---
 

@@ -215,6 +215,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PolicyVersionsResponse'
+  /v1/training/demonstrations/start:
+    post:
+      summary: Start manual demonstration recording
+      operationId: startDemonstration
+      responses:
+        '200':
+          description: Demonstration session started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoSessionResponse'
+  /v1/training/demonstrations/record:
+    post:
+      summary: Record one demonstration step
+      operationId: recordDemonstration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DemoRecordRequest'
+      responses:
+        '200':
+          description: Demonstration step recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '409':
+          description: Demonstration session not active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/training/demonstrations/stop:
+    post:
+      summary: Stop manual demonstration recording
+      operationId: stopDemonstration
+      responses:
+        '200':
+          description: Demonstration session stopped
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoSessionResponse'
+        '409':
+          description: Demonstration session not active
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
     RunStatus:
@@ -372,6 +424,32 @@ components:
           items:
             $ref: '#/components/schemas/PolicyVersion'
       required: [latest_model_id, versions]
+    DemoRecordRequest:
+      type: object
+      properties:
+        action_taken:
+          type: string
+        reward_proxy:
+          type: number
+        terminal:
+          type: boolean
+        state_features:
+          type: object
+          additionalProperties: true
+      required: [action_taken]
+    DemoSessionResponse:
+      type: object
+      properties:
+        session_id:
+          type: string
+        step_index:
+          type: integer
+          minimum: 0
+        active:
+          type: boolean
+        auto_capture_enabled:
+          type: boolean
+      required: [session_id, step_index, active, auto_capture_enabled]
     CycleSummary:
       type: object
       properties:

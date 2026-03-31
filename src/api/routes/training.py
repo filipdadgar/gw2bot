@@ -14,6 +14,62 @@ class PolicyRecommendRequest(BaseModel):
     state_features: dict[str, Any]
 
 
+class DemoRecordRequest(BaseModel):
+    action_taken: str
+    reward_proxy: float = 0.0
+    terminal: bool = False
+    state_features: dict[str, Any] | None = None
+
+
+@router.post("/demonstrations/start")
+def start_demonstration(request: Request) -> dict[str, object]:
+    recorder = request.app.state.demonstration_recorder
+    session = recorder.start()
+    auto_capture = False
+    if bool(request.app.state.settings.gw2_demo_auto_capture_enabled):
+        listener = request.app.state.manual_input_listener
+        auto_capture = bool(listener.start())
+    return {
+        "session_id": session.session_id,
+        "step_index": session.step_index,
+        "active": session.active,
+        "auto_capture_enabled": auto_capture,
+    }
+
+
+@router.post("/demonstrations/record")
+def record_demonstration(payload: DemoRecordRequest, request: Request) -> dict[str, object]:
+    recorder = request.app.state.demonstration_recorder
+    try:
+        signal = recorder.record(
+            action_taken=payload.action_taken,
+            reward_proxy=payload.reward_proxy,
+            terminal=payload.terminal,
+            state_features=payload.state_features,
+        )
+    except RuntimeError as exc:
+        if str(exc) == "demo_session_not_active":
+            raise HTTPException(status_code=409, detail={"code": "demo_session_not_active"}) from exc
+        raise
+    return signal
+
+
+@router.post("/demonstrations/stop")
+def stop_demonstration(request: Request) -> dict[str, object]:
+    recorder = request.app.state.demonstration_recorder
+    listener = request.app.state.manual_input_listener
+    listener.stop()
+    session = recorder.stop()
+    if session is None:
+        raise HTTPException(status_code=409, detail={"code": "demo_session_not_active"})
+    return {
+        "session_id": session.session_id,
+        "step_index": session.step_index,
+        "active": session.active,
+        "auto_capture_enabled": False,
+    }
+
+
 @router.get("/policy/versions")
 def list_policy_versions(request: Request) -> dict[str, object]:
     registry = request.app.state.policy_registry
