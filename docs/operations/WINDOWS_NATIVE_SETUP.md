@@ -63,10 +63,16 @@ With the virtual environment active:
 
 ```powershell
 pip install --upgrade pip
-pip install -r requirements.txt
+pip install -e .
 ```
 
 This installs FastAPI, Pydantic, pytest, and all bot dependencies.
+
+If you also want development tools (pytest, ruff, mypy), run:
+
+```powershell
+pip install -e ".[dev]"
+```
 
 ---
 
@@ -226,7 +232,7 @@ Full API docs available at: `http://127.0.0.1:8000/docs`
 
 ### "Module not found" Error
 - Verify virtual environment is active: `(.venv)` should appear in prompt
-- Re-run: `pip install -r requirements.txt`
+- Re-run: `pip install -e .`
 
 ### Port 8000 Already in Use
 If another app is using port 8000, specify a different port:
