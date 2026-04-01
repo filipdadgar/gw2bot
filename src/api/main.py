@@ -168,6 +168,13 @@ def create_app() -> FastAPI:
         on_harvest=_on_harvest_callback,
     )
 
+    if bool(settings.gw2_demo_auto_capture_enabled):
+        started = manual_input_listener.start()
+        if started:
+            logger.info("ManualInputListener started — keypresses will suppress bot and record demo data")
+        else:
+            logger.warning("ManualInputListener failed to start (pynput unavailable?)")
+
     if settings.gw2_training_auto_retrain_enabled:
         interval = max(1, settings.gw2_training_retrain_interval_seconds)
         _start_auto_retrain_worker(policy_registry=policy_registry, interval_seconds=interval)

@@ -91,7 +91,9 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
 @router.get("/status")
 def get_run_status(request: Request) -> dict[str, object]:
     orchestrator = request.app.state.farm_cycle_orchestrator
-    return _snapshot_to_response(orchestrator.status())
+    response = _snapshot_to_response(orchestrator.status())
+    response.update(orchestrator.live_state())
+    return response
 
 
 @router.get("/config")

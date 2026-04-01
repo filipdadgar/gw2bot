@@ -669,6 +669,15 @@
             document.getElementById('routeId').textContent = status.route_id || '—';
             document.getElementById('waypointIndex').textContent = status.current_waypoint_index !== null ? status.current_waypoint_index : '—';
 
+            // Update live runtime indicators (always current, even when paused)
+            const manualActive = !!status.manual_input_active;
+            const manualEl = document.getElementById('manualOverride');
+            manualEl.textContent = manualActive ? 'ACTIVE' : 'Inactive';
+            manualEl.className = `status-badge ${manualActive ? 'status-paused pulse' : 'status-stopped'}`;
+
+            const lockMs = Number(status.gather_lock_remaining_ms || 0);
+            document.getElementById('gatherLockMs').textContent = lockMs > 0 ? `${lockMs} ms` : '—';
+
             // Update button states
             const pauseBtn = document.getElementById('pauseBtn');
             pauseBtn.disabled = status.status !== 'running';
@@ -705,19 +714,6 @@
             if (signals.signals.length === 0) {
                 log.innerHTML = '<div class="signal-item"><div class="signal-time">No signals yet</div></div>';
                 return;
-            }
-
-            // Update Run Status card live indicators from most recent signal
-            if (signals.signals.length > 0) {
-                const latest = signals.signals[signals.signals.length - 1];
-                const sf = latest.state_features || {};
-                const manualActive = Number(sf.manual_input_active || 0) >= 0.5;
-                const manualEl = document.getElementById('manualOverride');
-                manualEl.textContent = manualActive ? 'ACTIVE' : 'Inactive';
-                manualEl.className = `status-badge ${manualActive ? 'status-paused pulse' : 'status-stopped'}`;
-
-                const lockMs = Number(sf.gather_lock_remaining_ms || 0);
-                document.getElementById('gatherLockMs').textContent = lockMs > 0 ? `${lockMs} ms` : '—';
             }
 
             signals.signals.forEach(signal => {

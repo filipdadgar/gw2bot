@@ -595,6 +595,18 @@ class FarmCycleOrchestrator:
     def status(self) -> RunSnapshot:
         return self._snapshot
 
+    def live_state(self) -> dict[str, object]:
+        """Return live-computed runtime indicators independent of the signal log.
+
+        These are updated on every call so they reflect current reality even
+        when the bot loop is paused (e.g. during route recording).
+        """
+        now = time.monotonic()
+        return {
+            "manual_input_active": now < self._manual_input_active_until,
+            "gather_lock_remaining_ms": self._gather_lock_remaining_ms(now=now),
+        }
+
     def pause(self) -> bool:
         if self._snapshot.status != RunState.RUNNING.value:
             return False

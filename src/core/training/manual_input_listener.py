@@ -131,9 +131,9 @@ class ManualInputListener:
 
         if any(token in text for token in ["'w'", "'a'", "'s'", "'d'", "up", "down", "left", "right"]):
             return "navigate"
-        if any(token in text for token in ["space", "enter", "return", "'e'", "'f'"]):
+        if any(token in text for token in ["space", "enter", "return", "'e'"]):
             return "interact"
-        if any(token in text for token in ["'r'", "'h'"]):
+        if any(token in text for token in ["'f'", "'r'", "'h'"]):
             return "harvest"
         return None
 
