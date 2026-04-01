@@ -18,10 +18,10 @@ build/
 .env.*.local
 
 # Runtime-generated bot artifacts
-data/routes/route-*.json
-data/telemetry/policy-signals.jsonl
-data/telemetry/event-log*.jsonl
-data/telemetry/cycle-summaries*.jsonl
+data/routes/*
+!data/routes/.gitkeep
+data/telemetry/*
+!data/telemetry/.gitkeep
 
 # Tooling
 .pytest_cache/
