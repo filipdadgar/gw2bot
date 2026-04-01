@@ -648,13 +648,13 @@
             }
 
             signals.signals.forEach(signal => {
-                const time = new Date(signal.timestamp);
+                const time = signal.generated_at_utc ? new Date(signal.generated_at_utc) : new Date();
                 const item = document.createElement('div');
                 item.className = 'signal-item';
                 item.innerHTML = `
                     <div class="signal-time">${time.toLocaleTimeString()}</div>
                     <div class="signal-action">Action: ${signal.action_taken || 'none'}</div>
-                    <div>Confidence: ${(signal.confidence || 0).toFixed(2)}</div>
+                    <div>Reward: ${(signal.reward_proxy || 0).toFixed(2)} | Step: ${signal.step_index || 0}</div>
                 `;
                 log.appendChild(item);
             });

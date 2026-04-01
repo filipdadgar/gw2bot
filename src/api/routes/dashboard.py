@@ -26,11 +26,11 @@ def get_recent_signals(request: Request, limit: int = 10) -> dict[str, object]:
                         signal = json.loads(line)
                         signals.append({
                             "signal_id": signal.get("signal_id"),
-                            "timestamp": signal.get("timestamp"),
+                            "generated_at_utc": signal.get("generated_at_utc"),
                             "action_taken": signal.get("action_taken"),
                             "reward_proxy": signal.get("reward_proxy"),
+                            "step_index": signal.get("step_index"),
                             "state_features": signal.get("state_features", {}),
-                            "confidence": signal.get("confidence"),
                         })
                     except (json.JSONDecodeError, ValueError):
                         continue
