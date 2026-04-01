@@ -192,6 +192,10 @@
 - [X] T085 [P] Implement dashboard telemetry API endpoint in src/api/routes/dashboard.py
 - [X] T086 Wire dashboard routes into API factory and serve at / and /dashboard endpoints in src/api/main.py
 - [X] T087 Add dashboard documentation and update quickstart with web UI option in docs/DASHBOARD.md and specs/001-gw2-resource-farm-bot/quickstart.md
+- [X] T088 [P] Implement gather prompt visibility detector heuristics in src/core/capture/interaction_prompt_detector.py
+- [X] T089 Wire gather prompt state into runtime features and prioritize harvest action in src/core/orchestration/farm_cycle_orchestrator.py
+- [X] T090 [P] Add unit tests for gather prompt detector and deterministic action override in tests/unit/test_interaction_prompt_detector.py and tests/unit/test_runtime_policy_threshold.py
+- [X] T091 Update dashboard recent-actions display and spec artifacts to include prompt visibility signal behavior in src/api/static/dashboard.html and specs/001-gw2-resource-farm-bot/*
 
 ---
 

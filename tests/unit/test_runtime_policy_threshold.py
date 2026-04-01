@@ -53,3 +53,17 @@ def test_select_action_uses_fallback_when_policy_disabled() -> None:
     )
 
     assert action == "navigate"
+
+
+def test_select_action_forces_harvest_when_gather_prompt_visible() -> None:
+    state = {"brightness": 0.1, "gather_prompt_visible": 1.0}
+    registry = _PolicyRegistryStub(confidence=0.99, action="navigate")
+
+    action = FarmCycleOrchestrator._select_action(
+        state_features=state,
+        policy_registry=registry,
+        policy_enabled=True,
+        policy_min_confidence=0.7,
+    )
+
+    assert action == "harvest"

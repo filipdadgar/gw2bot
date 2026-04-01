@@ -11,6 +11,7 @@ import time
 from typing import Any
 from uuid import uuid4
 
+from src.core.capture.interaction_prompt_detector import detect_gather_prompt_visible
 from src.core.orchestration.policy_signal_emitter import PolicySignalEmitter
 from src.core.persistence.policy_signal_store import PolicySignalStore
 from src.core.orchestration.state_types import RunState
@@ -174,12 +175,14 @@ class FarmCycleOrchestrator:
                         frame = frame_capture.frame
                         brightness = float(frame.mean() / 255.0)
                         contrast = float(frame.std() / 255.0)
+                        gather_prompt_visible = 1.0 if detect_gather_prompt_visible(frame) else 0.0
                         state_features = {
                             "brightness": round(brightness, 4),
                             "contrast": round(contrast, 4),
                             "frame_width": frame_capture.width,
                             "frame_height": frame_capture.height,
                             "bridge_enabled": 1.0,
+                            "gather_prompt_visible": gather_prompt_visible,
                         }
                     else:
                         state_features = {
@@ -188,6 +191,7 @@ class FarmCycleOrchestrator:
                             "frame_width": 0,
                             "frame_height": 0,
                             "bridge_enabled": 0.0,
+                            "gather_prompt_visible": 0.0,
                         }
 
                     action_taken = self._select_action(
@@ -252,6 +256,11 @@ class FarmCycleOrchestrator:
         policy_min_confidence: float,
     ) -> str:
         """Choose action from policy when confident, else fallback heuristic."""
+
+        # Deterministic safety trigger: if the on-screen gather prompt is visible,
+        # prioritize harvest so runtime input executes the gather key immediately.
+        if float(state_features.get("gather_prompt_visible", 0.0)) >= 0.5:
+            return "harvest"
 
         brightness = float(state_features.get("brightness", 0.0))
         fallback_action = "harvest" if brightness > 0.6 else "navigate"

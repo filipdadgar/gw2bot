@@ -225,6 +225,25 @@ cause game window focus loss.
 
 ---
 
+### SC-016: Deterministic Gather Prompt Override ✅
+
+**Requirement**: During active runtime with healthy host bridge, when the gather
+prompt is visible in frame capture, action selection deterministically resolves
+to harvest for that step and telemetry records prompt visibility state.
+
+**Validation**:
+- Added gather prompt detector heuristic in lower-center frame ROI:
+  - `src/core/capture/interaction_prompt_detector.py`
+- Runtime state now records `state_features.gather_prompt_visible`.
+- Action selection now short-circuits to `harvest` when prompt visibility is high.
+- Unit tests validate detector and deterministic override:
+  - `tests/unit/test_interaction_prompt_detector.py`
+  - `tests/unit/test_runtime_policy_threshold.py`
+
+**Status**: ✅ PASS
+
+---
+
 ## Feature Completeness
 
 ### User Story 1: Discover and Run (P1) ✅
@@ -290,6 +309,19 @@ cause game window focus loss.
 
 ---
 
+### Gather Prompt Deterministic Interaction ✅
+
+| Component | Status | Tests |
+|-----------|--------|-------|
+| Prompt Visibility Detector | ✅ | `test_interaction_prompt_detector.py` |
+| Runtime Harvest Override | ✅ | `test_runtime_policy_threshold.py` |
+| Prompt Signal Telemetry | ✅ | runtime `state_features.gather_prompt_visible` |
+| Dashboard Prompt Visibility Rendering | ✅ | manual verification |
+
+**Verdict**: When gather prompt is visible, runtime now prioritizes reliable harvest key execution.
+
+---
+
 ## Deployment Readiness
 
 ### Docker Containerization ✅
@@ -342,7 +374,7 @@ cause game window focus loss.
 ## Release Checklist
 
 - [x] All mandatory user stories (US1, US2, US3, Web Dashboard) implemented
-- [x] All success criteria (SC-001 through SC-015) validated
+- [x] All success criteria (SC-001 through SC-016) validated
 - [x] Constitution alignment verified (CAR-001 through CAR-004)
 - [x] Full test suite passing (76/76 tests)
 - [x] Code linting clean (ruff check)

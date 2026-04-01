@@ -16,7 +16,7 @@ Open your browser and navigate to:
 - **Real-time Status**: View current cycle, route, and waypoint
 - **Auto-retrain**: Background policy training every 300 seconds
 
-###Policy Management
+### Policy Management
 - **Train Now**: Trigger model training on demand
 - **Model Info**: See latest model ID, sample count, and training timestamp
 - **Confidence Settings**: Adjust runtime decision thresholds
@@ -28,8 +28,8 @@ Open your browser and navigate to:
 
 ### Recent Actions Log
 - **Live Feed**: See actions as they execute (navigate, harvest, interact)
-- **Confidence Scores**: Review confidence values for each decision
-- **Rewards**: Track proxy rewards for signal quality
+- **Reward + Step**: Track proxy reward and step progression per signal
+- **Prompt Visibility**: Shows whether gather prompt was detected for that step (`Prompt: yes/no`)
 
 ### Settings
 - **Policy Confidence Threshold**: Adjust from 0.0 to 1.0

@@ -177,6 +177,10 @@ recommendations for valid state input.
   supporting run lifecycle control (start/pause/resume/stop), real-time status
   updates, policy model information, bridge health monitoring, and recent action
   logs accessible via HTTP browser interface on the same machine or network.
+- **FR-021**: System MUST detect the in-game gather/interact prompt visibility
+  from captured frames and deterministically prioritize harvest interaction
+  actions when prompt visibility is high, so gather key execution is reliable at
+  close range.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -252,6 +256,9 @@ recommendations for valid state input.
   displays real-time run status and recent actions updating every 2 seconds,
   supports run lifecycle control with immediate visual feedback, and does not
   cause game window focus loss when operated.
+- **SC-016**: During active runtime with healthy host bridge, when the gather
+  prompt is visible in frame capture, action selection deterministically resolves
+  to harvest for that step and telemetry records prompt visibility state.
 
 ## Assumptions
 

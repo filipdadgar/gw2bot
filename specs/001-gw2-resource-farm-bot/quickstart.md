@@ -186,6 +186,11 @@ tail -n 5 data/telemetry/policy-signals.jsonl
 Expected: `state_features.bridge_enabled=1.0` and non-zero frame dimensions while the
 active cycle progresses.
 
+Optional validation for deterministic gathering:
+- When close to a resource node and the in-game gather prompt is visible,
+  `state_features.gather_prompt_visible` should appear as `1.0` in recent signals.
+- For those steps, runtime action should resolve to `harvest`.
+
 5. Operator control calls (if needed):
 
 ```bash
