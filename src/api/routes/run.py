@@ -57,6 +57,7 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
             gather_prompt_latch_seconds=float(settings.gw2_runtime_gather_prompt_latch_seconds),
             policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
             interval_seconds=interval_seconds,
+            manual_pause_seconds=float(settings.gw2_runtime_manual_pause_seconds),
         )
 
         if bridge_enabled and capture_bridge is not None:

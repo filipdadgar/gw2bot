@@ -48,8 +48,10 @@ class FarmCycleOrchestrator:
         self._runtime_waypoint_steering_enabled = True
         self._runtime_gather_lock_seconds = 1.6
         self._runtime_gather_lock_until = 0.0
-        self._runtime_gather_prompt_latch_seconds = 2.2
+        self._runtime_gather_prompt_latch_seconds = 3.0
         self._runtime_prompt_latch_until = 0.0
+        self._manual_pause_seconds = 3.0
+        self._manual_input_active_until = 0.0
         self._snapshot = RunSnapshot(
             cycle_id=None,
             route_id=None,
@@ -154,8 +156,9 @@ class FarmCycleOrchestrator:
         interval_seconds: float,
         mount_cycle_enabled: bool = True,
         waypoint_steering_enabled: bool = True,
-        gather_lock_seconds: float = 1.6,
-        gather_prompt_latch_seconds: float = 2.2,
+        gather_lock_seconds: float = 3.0,
+        gather_prompt_latch_seconds: float = 3.0,
+        manual_pause_seconds: float = 3.0,
     ) -> None:
         """Start a background loop that emits policy signals while run is active."""
 
@@ -168,6 +171,8 @@ class FarmCycleOrchestrator:
         self._runtime_gather_lock_until = 0.0
         self._runtime_gather_prompt_latch_seconds = max(0.0, float(gather_prompt_latch_seconds))
         self._runtime_prompt_latch_until = 0.0
+        self._manual_pause_seconds = max(0.0, float(manual_pause_seconds))
+        self._manual_input_active_until = 0.0
         self._runtime_stop_event.clear()
 
         def _worker() -> None:
@@ -229,9 +234,11 @@ class FarmCycleOrchestrator:
                     )
                     now_monotonic = time.monotonic()
                     lock_active = self._is_gather_lock_active(now=now_monotonic)
+                    manual_active = now_monotonic < self._manual_input_active_until
                     state_features["nav_direction_bias"] = float(nav_direction_bias)
                     state_features["remount_pending"] = 1.0 if self._runtime_remount_pending else 0.0
                     state_features["gather_lock_remaining_ms"] = self._gather_lock_remaining_ms(now=now_monotonic)
+                    state_features["manual_input_active"] = 1.0 if manual_active else 0.0
 
                     action_taken = self._select_action(
                         state_features=state_features,
@@ -241,29 +248,33 @@ class FarmCycleOrchestrator:
                     )
 
                     if input_enabled and input_bridge is not None:
-                        if (
-                            self._runtime_mount_cycle_enabled
-                            and action_taken == "navigate"
-                            and self._runtime_remount_pending
-                            and not lock_active
-                        ):
-                            self._tap_key(input_bridge=input_bridge, key="x", hold_seconds=0.06)
-                            self._runtime_remount_pending = False
-                            state_features["mount_action"] = "remount"
-
-                        if lock_active and action_taken == "navigate":
-                            state_features["input_suppressed_reason"] = "gather_lock"
+                        if manual_active:
+                            # Operator is in control — record the observation but send no input.
+                            state_features["input_suppressed_reason"] = "manual_input"
                         else:
-                            self._execute_runtime_action(
-                                action_taken=action_taken,
-                                input_bridge=input_bridge,
-                                step_index=self._snapshot.current_waypoint_index,
-                                direction_bias=nav_direction_bias,
-                            )
+                            if (
+                                self._runtime_mount_cycle_enabled
+                                and action_taken == "navigate"
+                                and self._runtime_remount_pending
+                                and not lock_active
+                            ):
+                                self._tap_key(input_bridge=input_bridge, key="x", hold_seconds=0.06)
+                                self._runtime_remount_pending = False
+                                state_features["mount_action"] = "remount"
 
-                        if self._runtime_mount_cycle_enabled and action_taken in {"harvest", "interact"}:
-                            self._runtime_remount_pending = True
-                            self._set_gather_lock(now=now_monotonic)
+                            if lock_active and action_taken == "navigate":
+                                state_features["input_suppressed_reason"] = "gather_lock"
+                            else:
+                                self._execute_runtime_action(
+                                    action_taken=action_taken,
+                                    input_bridge=input_bridge,
+                                    step_index=self._snapshot.current_waypoint_index,
+                                    direction_bias=nav_direction_bias,
+                                )
+
+                            if self._runtime_mount_cycle_enabled and action_taken in {"harvest", "interact"}:
+                                self._runtime_remount_pending = True
+                                self._set_gather_lock(now=now_monotonic)
 
                     reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
                     self.emit_runtime_policy_signal(
@@ -337,7 +348,9 @@ class FarmCycleOrchestrator:
 
         keys = pattern[max(0, int(step_index)) % len(pattern)]
         for key in keys:
-            hold = 0.05 if key in {"a", "d"} else 0.08
+            # Longer W hold gives smooth continuous forward movement (GW2 needs ~300-400ms
+            # to feel fluid while flying/running). A/D are short correction taps.
+            hold = 0.10 if key in {"a", "d"} else 0.40
             FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key, hold_seconds=hold)
 
     def _compute_route_direction_bias(self, step_index: int) -> int:
@@ -362,6 +375,16 @@ class FarmCycleOrchestrator:
         if dx >= 8:
             return 1
         return 0
+
+    def notify_manual_input(self) -> None:
+        """Called by ManualInputListener when the operator touches the keyboard/mouse.
+
+        Refreshes a debounce window during which bot input is suppressed so that
+        manual harvesting and movement are never interrupted by the bot loop.
+        The window resets on every key/click, so continuous manual play stays
+        suppressed for as long as the operator is active.
+        """
+        self._manual_input_active_until = time.monotonic() + self._manual_pause_seconds
 
     def _set_gather_lock(self, now: float | None = None) -> None:
         """Start or refresh the post-gather lock window."""

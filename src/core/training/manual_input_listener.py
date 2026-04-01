@@ -17,8 +17,12 @@ logger = logging.getLogger(__name__)
 class ManualInputListener:
     """Listens to local keyboard/mouse input and records demo actions."""
 
-    def __init__(self, demonstration_recorder: Any) -> None:
+    def __init__(self, demonstration_recorder: Any, on_manual_input: Any = None) -> None:
         self._recorder = demonstration_recorder
+        # Optional zero-argument callback invoked on every detected manual key/click.
+        # Used to notify the orchestrator so it suppresses bot input while the
+        # operator is in control.
+        self._on_manual_input = on_manual_input
         self._keyboard_listener = None
         self._mouse_listener = None
         self._running = False
@@ -64,7 +68,15 @@ class ManualInputListener:
         self._mouse_listener = None
         self._running = False
 
+    def _fire_manual_input_callback(self) -> None:
+        if callable(self._on_manual_input):
+            try:
+                self._on_manual_input()
+            except Exception:
+                logger.exception("manual_input_callback_failed")
+
     def _on_key_press(self, key: Any) -> None:
+        self._fire_manual_input_callback()
         action = self._map_key_to_action(key)
         if action is None:
             return
@@ -73,6 +85,7 @@ class ManualInputListener:
     def _on_click(self, x: int, y: int, button: Any, pressed: bool) -> None:
         if not pressed:
             return
+        self._fire_manual_input_callback()
         action = self._map_click_to_action(button)
         if action is None:
             return

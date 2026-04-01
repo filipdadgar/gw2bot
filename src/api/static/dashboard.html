@@ -420,6 +420,14 @@
                     <span class="stat-label">Waypoint:</span>
                     <span class="stat-value" id="waypointIndex">—</span>
                 </div>
+                <div class="stat-row">
+                    <span class="stat-label">Manual Override:</span>
+                    <span id="manualOverride" class="status-badge status-stopped">Inactive</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Gather Lock:</span>
+                    <span class="stat-value" id="gatherLockMs">—</span>
+                </div>
                 <div class="button-group">
                     <button class="btn-success" onclick="startRun()">▶️ Start</button>
                     <button class="btn-warning" id="pauseBtn" onclick="pauseRun()" disabled>⏸ Pause</button>
@@ -647,16 +655,39 @@
                 return;
             }
 
+            // Update Run Status card live indicators from most recent signal
+            if (signals.signals.length > 0) {
+                const latest = signals.signals[signals.signals.length - 1];
+                const sf = latest.state_features || {};
+                const manualActive = Number(sf.manual_input_active || 0) >= 0.5;
+                const manualEl = document.getElementById('manualOverride');
+                manualEl.textContent = manualActive ? 'ACTIVE' : 'Inactive';
+                manualEl.className = `status-badge ${manualActive ? 'status-paused pulse' : 'status-stopped'}`;
+
+                const lockMs = Number(sf.gather_lock_remaining_ms || 0);
+                document.getElementById('gatherLockMs').textContent = lockMs > 0 ? `${lockMs} ms` : '—';
+            }
+
             signals.signals.forEach(signal => {
                 const time = signal.generated_at_utc ? new Date(signal.generated_at_utc) : new Date();
-                const promptVisible = Number(signal.state_features?.gather_prompt_visible || 0) >= 0.5;
-                const navBias = Number(signal.state_features?.nav_direction_bias || 0);
-                const mountAction = signal.state_features?.mount_action || '-';
+                const sf = signal.state_features || {};
+                const promptVisible = Number(sf.gather_prompt_visible || 0) >= 0.5;
+                const navBias = Number(sf.nav_direction_bias || 0);
+                const mountAction = sf.mount_action || '-';
+                const suppressReason = sf.input_suppressed_reason || null;
+                const manualActive = Number(sf.manual_input_active || 0) >= 0.5;
+
                 const item = document.createElement('div');
                 item.className = 'signal-item';
+                const suppressTag = suppressReason
+                    ? `<span style="color:#856404;font-weight:600"> [${suppressReason}]</span>`
+                    : '';
+                const manualTag = manualActive
+                    ? `<span style="color:#856404;font-weight:600"> 🙋 manual</span>`
+                    : '';
                 item.innerHTML = `
                     <div class="signal-time">${time.toLocaleTimeString()}</div>
-                    <div class="signal-action">Action: ${signal.action_taken || 'none'}</div>
+                    <div class="signal-action">Action: ${signal.action_taken || 'none'}${suppressTag}${manualTag}</div>
                     <div>Reward: ${(signal.reward_proxy || 0).toFixed(2)} | Step: ${signal.step_index || 0} | Prompt: ${promptVisible ? 'yes' : 'no'} | Bias: ${navBias} | Mount: ${mountAction}</div>
                 `;
                 log.appendChild(item);

@@ -32,8 +32,12 @@ class Settings(BaseSettings):
     )
     gw2_runtime_gather_lock_seconds: float = Field(default=1.6, alias="GW2_RUNTIME_GATHER_LOCK_SECONDS")
     gw2_runtime_gather_prompt_latch_seconds: float = Field(
-        default=2.2,
+        default=3.0,
         alias="GW2_RUNTIME_GATHER_PROMPT_LATCH_SECONDS",
+    )
+    gw2_runtime_manual_pause_seconds: float = Field(
+        default=3.0,
+        alias="GW2_RUNTIME_MANUAL_PAUSE_SECONDS",
     )
     gw2_runtime_policy_min_confidence: float = Field(default=0.7, alias="GW2_RUNTIME_POLICY_MIN_CONFIDENCE")
     gw2_runtime_signal_interval_ms: int = Field(default=1000, alias="GW2_RUNTIME_SIGNAL_INTERVAL_MS")

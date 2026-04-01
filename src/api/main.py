@@ -81,6 +81,7 @@ def _startup_autostart_run(app: FastAPI) -> None:
         gather_prompt_latch_seconds=float(settings.gw2_runtime_gather_prompt_latch_seconds),
         policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
         interval_seconds=interval_seconds,
+        manual_pause_seconds=float(settings.gw2_runtime_manual_pause_seconds),
     )
 
     if capture_bridge is None:
@@ -133,7 +134,10 @@ def create_app() -> FastAPI:
         capture_bridge=capture_bridge,
         bridge_enabled=bridge_enabled,
     )
-    manual_input_listener = ManualInputListener(demo_recorder)
+    manual_input_listener = ManualInputListener(
+        demo_recorder,
+        on_manual_input=farm_cycle_orchestrator.notify_manual_input,
+    )
 
     if settings.gw2_training_auto_retrain_enabled:
         interval = max(1, settings.gw2_training_retrain_interval_seconds)

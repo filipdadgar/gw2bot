@@ -1,0 +1,1793 @@
+{
+  "model_id": "policy-83e7da31",
+  "trained_at_utc": "2026-04-01T13:59:11.833748+00:00",
+  "sample_count": 308,
+  "action_count": 3,
+  "default_action": "harvest",
+  "action_stats": {
+    "navigate": {
+      "count": 7,
+      "avg_reward": 0.42105714285714285
+    },
+    "harvest": {
+      "count": 298,
+      "avg_reward": 0.4360838926174497
+    },
+    "stop": {
+      "count": 3,
+      "avg_reward": 0.0
+    }
+  },
+  "state_action_values": {
+    "{\"bridge_enabled\":1.0,\"brightness\":0.1581,\"contrast\":0.2348,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":0.0}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4348
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3065,\"contrast\":0.236,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3052,\"contrast\":0.2349,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4349
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3059,\"contrast\":0.2355,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4355
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3046,\"contrast\":0.2347,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4347
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3041,\"contrast\":0.2339,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4339
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3057,\"contrast\":0.2358,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4358
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.305,\"contrast\":0.2345,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4345
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.305,\"contrast\":0.2352,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43520000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3049,\"contrast\":0.2335,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4335
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.308,\"contrast\":0.2364,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4364
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3227,\"contrast\":0.2359,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4359
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2867,\"contrast\":0.2258,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4258
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2714,\"contrast\":0.2228,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4228
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2512,\"contrast\":0.2242,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4242
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.253,\"contrast\":0.2254,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4254
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2517,\"contrast\":0.2241,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42410000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.269,\"contrast\":0.2233,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4233
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3267,\"contrast\":0.2409,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4409
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3223,\"contrast\":0.2381,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43810000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2899,\"contrast\":0.2311,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43110000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2785,\"contrast\":0.2355,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4355
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2593,\"contrast\":0.2321,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43210000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.257,\"contrast\":0.2316,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4316
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2926,\"contrast\":0.235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2871,\"contrast\":0.2296,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4296
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2924,\"contrast\":0.2283,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4283
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2962,\"contrast\":0.2308,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4308
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2705,\"contrast\":0.2296,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4296
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2764,\"contrast\":0.2348,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4348
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2615,\"contrast\":0.236,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2621,\"contrast\":0.2369,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4369
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.262,\"contrast\":0.2366,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4366
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2375,\"contrast\":0.2311,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43110000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2319,\"contrast\":0.2357,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4357
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2625,\"contrast\":0.2286,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4286
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2748,\"contrast\":0.2278,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4278
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2601,\"contrast\":0.2291,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42910000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2588,\"contrast\":0.2296,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4296
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2491,\"contrast\":0.2321,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43210000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2491,\"contrast\":0.2322,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43220000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2525,\"contrast\":0.2305,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4305
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2616,\"contrast\":0.2379,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4379
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2822,\"contrast\":0.2436,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3479,\"contrast\":0.2476,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4476
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3373,\"contrast\":0.2444,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3341,\"contrast\":0.2418,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44179999999999997
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3438,\"contrast\":0.2443,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44430000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.338,\"contrast\":0.2423,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4423
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.331,\"contrast\":0.2387,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4387
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3413,\"contrast\":0.2429,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4429
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3204,\"contrast\":0.2371,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43710000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2978,\"contrast\":0.2363,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4363
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2762,\"contrast\":0.2364,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4364
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2676,\"contrast\":0.23,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43000000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2956,\"contrast\":0.2318,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4318
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2945,\"contrast\":0.2301,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43010000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3011,\"contrast\":0.2403,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4403
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3222,\"contrast\":0.2383,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4383
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3386,\"contrast\":0.2368,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4368
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3379,\"contrast\":0.2373,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4373
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.328,\"contrast\":0.2329,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4329
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3171,\"contrast\":0.2302,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4302
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3057,\"contrast\":0.2324,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4324
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.312,\"contrast\":0.2347,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4347
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2949,\"contrast\":0.2267,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4267
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2792,\"contrast\":0.2238,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4238
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2798,\"contrast\":0.2247,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4247
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2799,\"contrast\":0.2237,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4237
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3083,\"contrast\":0.2271,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42710000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.312,\"contrast\":0.229,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42900000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3389,\"contrast\":0.2458,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4458
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3413,\"contrast\":0.243,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.443
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3292,\"contrast\":0.2412,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44120000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3407,\"contrast\":0.2366,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4366
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3281,\"contrast\":0.2344,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4344
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3053,\"contrast\":0.2281,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42810000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3051,\"contrast\":0.2382,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43820000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2974,\"contrast\":0.2293,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4293
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3021,\"contrast\":0.2284,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4284
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3075,\"contrast\":0.23,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43000000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3041,\"contrast\":0.2304,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4304
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3019,\"contrast\":0.2346,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4346
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2989,\"contrast\":0.239,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.439
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3026,\"contrast\":0.2385,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4385
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2808,\"contrast\":0.2278,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4278
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3,\"contrast\":0.232,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43200000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2698,\"contrast\":0.2271,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42710000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2624,\"contrast\":0.2295,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4295
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2629,\"contrast\":0.2293,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4293
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2995,\"contrast\":0.2307,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43069999999999997
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3173,\"contrast\":0.2396,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4396
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3172,\"contrast\":0.2387,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4387
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3132,\"contrast\":0.2326,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4326
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.301,\"contrast\":0.2288,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4288
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2781,\"contrast\":0.2256,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4256
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2606,\"contrast\":0.2231,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42310000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2619,\"contrast\":0.2242,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4242
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2881,\"contrast\":0.2294,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4294
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3356,\"contrast\":0.2392,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43920000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3213,\"contrast\":0.2325,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4325
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2981,\"contrast\":0.2291,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42910000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2956,\"contrast\":0.2404,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4404
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.279,\"contrast\":0.2322,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43220000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2946,\"contrast\":0.232,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43200000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3143,\"contrast\":0.2307,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43069999999999997
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3337,\"contrast\":0.2353,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4353
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3376,\"contrast\":0.235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3376,\"contrast\":0.2344,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4344
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.338,\"contrast\":0.2364,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4364
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.337,\"contrast\":0.2344,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4344
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3385,\"contrast\":0.235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3381,\"contrast\":0.2349,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4349
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3371,\"contrast\":0.235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3373,\"contrast\":0.235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3374,\"contrast\":0.234,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43400000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3388,\"contrast\":0.2364,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4364
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.337,\"contrast\":0.234,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43400000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3376,\"contrast\":0.2343,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4343
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3382,\"contrast\":0.2344,\"frame_height\":1922,\"frame_width\":3548}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3382,\"contrast\":0.2342,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43420000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3374,\"contrast\":0.2335,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4335
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3386,\"contrast\":0.2361,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43610000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3373,\"contrast\":0.234,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43400000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3381,\"contrast\":0.2346,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4346
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3378,\"contrast\":0.2345,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4345
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3379,\"contrast\":0.2354,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4354
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3375,\"contrast\":0.234,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43400000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3491,\"contrast\":0.2434,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 4,
+        "avg_reward": 0.4434
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3501,\"contrast\":0.2457,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 3,
+        "avg_reward": 0.4457
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3486,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3492,\"contrast\":0.2435,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3495,\"contrast\":0.2447,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4447
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3492,\"contrast\":0.244,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3499,\"contrast\":0.2448,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4448
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3495,\"contrast\":0.2442,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44420000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3486,\"contrast\":0.2442,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44420000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3495,\"contrast\":0.2444,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3491,\"contrast\":0.2436,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3505,\"contrast\":0.2457,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4457
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.349,\"contrast\":0.2438,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4438
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3497,\"contrast\":0.2455,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4455
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3487,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3498,\"contrast\":0.2441,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44410000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3498,\"contrast\":0.2444,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3489,\"contrast\":0.2443,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44430000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3494,\"contrast\":0.2436,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 0.4436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3492,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3496,\"contrast\":0.2439,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4439
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3497,\"contrast\":0.2444,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3493,\"contrast\":0.2445,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4445
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3498,\"contrast\":0.2448,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4448
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3488,\"contrast\":0.2435,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3504,\"contrast\":0.2457,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4457
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.349,\"contrast\":0.2436,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.349,\"contrast\":0.2433,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4433
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3499,\"contrast\":0.2451,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44510000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3491,\"contrast\":0.2441,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44410000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.35,\"contrast\":0.2449,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4449
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3488,\"contrast\":0.2436,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4436
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3506,\"contrast\":0.2456,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4456
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3495,\"contrast\":0.2438,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4438
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3494,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.35,\"contrast\":0.2448,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4448
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3488,\"contrast\":0.244,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3503,\"contrast\":0.2451,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44510000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3493,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3488,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3492,\"contrast\":0.2434,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4434
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3496,\"contrast\":0.2448,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4448
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3495,\"contrast\":0.2443,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44430000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3505,\"contrast\":0.2451,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44510000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3491,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3495,\"contrast\":0.2452,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44520000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3503,\"contrast\":0.2454,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4454
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3488,\"contrast\":0.2438,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 0.4438
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3508,\"contrast\":0.2452,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44520000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3496,\"contrast\":0.2441,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44410000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3493,\"contrast\":0.2447,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4447
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3493,\"contrast\":0.2441,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44410000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3502,\"contrast\":0.2458,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4458
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3489,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.35,\"contrast\":0.2455,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 0.4455
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3491,\"contrast\":0.2438,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 0.4438
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.349,\"contrast\":0.2435,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4435
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3497,\"contrast\":0.2447,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4447
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3492,\"contrast\":0.2447,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4447
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3488,\"contrast\":0.2433,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4433
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3498,\"contrast\":0.2446,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4446
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3494,\"contrast\":0.244,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.444
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3491,\"contrast\":0.2448,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4448
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3493,\"contrast\":0.2433,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4433
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"reason\":\"operator_stop\"}": {
+      "stop": {
+        "count": 3,
+        "avg_reward": 0.0
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3487,\"contrast\":0.2437,\"frame_height\":1922,\"frame_width\":3548}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3487,\"contrast\":0.2442,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44420000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3496,\"contrast\":0.2442,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44420000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3378,\"contrast\":0.2342,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43420000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3129,\"contrast\":0.2263,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4263
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3252,\"contrast\":0.2285,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4285
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3429,\"contrast\":0.2378,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4378
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3198,\"contrast\":0.2306,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4306
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2836,\"contrast\":0.2336,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4336
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3029,\"contrast\":0.2274,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4274
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3082,\"contrast\":0.2251,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42510000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3009,\"contrast\":0.2273,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4273
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3029,\"contrast\":0.2279,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4279
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3019,\"contrast\":0.2269,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4269
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3019,\"contrast\":0.2268,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4268
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3018,\"contrast\":0.2268,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4268
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.301,\"contrast\":0.2275,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4275
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2918,\"contrast\":0.2267,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4267
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2971,\"contrast\":0.2251,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42510000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2994,\"contrast\":0.2239,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4239
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2867,\"contrast\":0.2231,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42310000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2751,\"contrast\":0.2235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4235
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2771,\"contrast\":0.224,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42400000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2795,\"contrast\":0.2244,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4244
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2791,\"contrast\":0.2247,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4247
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2793,\"contrast\":0.2255,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4255
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2909,\"contrast\":0.2293,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4293
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3047,\"contrast\":0.2243,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4243
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3173,\"contrast\":0.2311,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.43110000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3121,\"contrast\":0.2265,\"frame_height\":1922,\"frame_width\":3548}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3113,\"contrast\":0.2254,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4254
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3106,\"contrast\":0.2246,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4246
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3096,\"contrast\":0.2231,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42310000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3118,\"contrast\":0.2264,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4264
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3102,\"contrast\":0.2245,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4245
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3109,\"contrast\":0.2253,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4253
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3105,\"contrast\":0.2236,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4236
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3116,\"contrast\":0.2259,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4259
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3103,\"contrast\":0.2245,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4245
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3098,\"contrast\":0.2235,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4235
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3111,\"contrast\":0.2255,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4255
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3105,\"contrast\":0.2248,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4248
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3113,\"contrast\":0.2258,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4258
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3096,\"contrast\":0.2237,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4237
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3109,\"contrast\":0.2256,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4256
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3103,\"contrast\":0.2246,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4246
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3098,\"contrast\":0.223,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42300000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3137,\"contrast\":0.2282,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4282
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3122,\"contrast\":0.2262,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4262
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3123,\"contrast\":0.2255,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4255
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3139,\"contrast\":0.2273,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4273
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3128,\"contrast\":0.2264,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4264
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3136,\"contrast\":0.2272,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4272
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3121,\"contrast\":0.2255,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4255
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3132,\"contrast\":0.2271,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42710000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3127,\"contrast\":0.2264,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4264
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3115,\"contrast\":0.2248,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4248
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3133,\"contrast\":0.2275,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4275
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3125,\"contrast\":0.2263,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4263
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3132,\"contrast\":0.2274,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4274
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3124,\"contrast\":0.2258,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4258
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3115,\"contrast\":0.225,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42500000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3116,\"contrast\":0.2255,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4255
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3106,\"contrast\":0.224,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42400000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3117,\"contrast\":0.2253,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4253
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3108,\"contrast\":0.2245,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4245
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3102,\"contrast\":0.223,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42300000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3122,\"contrast\":0.2263,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4263
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3106,\"contrast\":0.2242,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4242
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3303,\"contrast\":0.2271,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42710000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.268,\"contrast\":0.2428,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.44279999999999997
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3278,\"contrast\":0.2275,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4275
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3413,\"contrast\":0.2355,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4355
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3513,\"contrast\":0.2467,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4467
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.355,\"contrast\":0.2358,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4358
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3359,\"contrast\":0.2348,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":0.0}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4348
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3368,\"contrast\":0.2395,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4395
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3081,\"contrast\":0.2366,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4366
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2938,\"contrast\":0.2368,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4368
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.28,\"contrast\":0.2245,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4245
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2779,\"contrast\":0.2243,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4243
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2753,\"contrast\":0.2241,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42410000000000003
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2696,\"contrast\":0.2244,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4244
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2703,\"contrast\":0.225,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42500000000000004
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2679,\"contrast\":0.2257,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4257
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2682,\"contrast\":0.2258,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4258
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2683,\"contrast\":0.2259,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4259
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2675,\"contrast\":0.226,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.42600000000000005
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2732,\"contrast\":0.2354,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4354
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2733,\"contrast\":0.2355,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4355
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2735,\"contrast\":0.2356,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4356
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.34,\"contrast\":0.3158,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.5158
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3341,\"contrast\":0.3111,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.5111
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3322,\"contrast\":0.3089,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.5089
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.335,\"contrast\":0.3105,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.5105
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3356,\"contrast\":0.3107,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.5106999999999999
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.336,\"contrast\":0.3115,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.5115000000000001
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2685,\"contrast\":0.2285,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4285
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.2754,\"contrast\":0.2256,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.4256
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3127,\"contrast\":0.237,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":1.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 0.437
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3335,\"contrast\":0.238,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":0.0}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.438
+      }
+    },
+    "{\"bridge_enabled\":1.0,\"brightness\":0.3435,\"contrast\":0.2398,\"frame_height\":1922,\"frame_width\":3548,\"gather_prompt_visible\":0.0}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4398
+      }
+    }
+  }
+}
