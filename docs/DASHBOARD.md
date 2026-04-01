@@ -1,94 +1,160 @@
 # GW2 Bot Web Dashboard
 
-A modern, web-based control interface for the GW2 Bot that requires no focus stealing. Unlike PowerShell terminal commands, the dashboard runs in a browser and doesn't interrupt your GW2 gameplay.
+A browser-based control interface for the GW2 Bot. Open it in a background tab — it never steals focus from GW2.
 
-## Access
+**URL**: `http://localhost:8000`  
+**Auto-refresh**: every 2 seconds
 
-Open your browser and navigate to:
+---
 
-- **Local access**: `http://localhost:8000`
-- **Network access**: `http://<your-machine-ip>:8000`
+## Cards
 
-## Features
+### Run Status
+| Field | Description |
+|---|---|
+| Status | `RUNNING` / `PAUSED` / `STOPPED` / `IDLE` |
+| Cycle ID | Unique ID for the current farming run |
+| Route | Route file being followed |
+| Waypoint | Step counter for the current route |
+| **Manual Override** | **ACTIVE** (amber, pulsing) when you touched the keyboard/mouse in the last 3 s — bot input is suppressed |
+| **Gather Lock** | Remaining ms of post-harvest movement suppression |
 
-### Run Control
-- **Start/Stop/Pause**: Control bot operations without switching windows
-- **Real-time Status**: View current cycle, route, and waypoint
-- **Auto-retrain**: Background policy training every 300 seconds
+**Buttons**: Start / Pause (toggles to Resume) / Stop
 
-### Policy Management
-- **Train Now**: Trigger model training on demand
-- **Model Info**: See latest model ID, sample count, and training timestamp
-- **Confidence Settings**: Adjust runtime decision thresholds
+---
 
-### Bridge Monitoring
-- **Host Bridge Status**: Real-time capture and input bridge health
-- **Frame Resolution**: Monitor actual game resolution for capture validation
-- **Action Execution**: See recent actions sent to the game in real-time
+### Player Position *(requires GW2 running with MumbleLink)*
+| Field | Description |
+|---|---|
+| MumbleLink | `Connected` (green) or `Offline` (red) |
+| Mount | Current mount name, e.g. `🐾 Griffon`, or `🚶 On foot` |
+| Map ID | GW2 map ID for the current zone |
+| World X / Z | Avatar world-space coordinates (metres) |
+| Continent X / Y | Minimap/cartography coordinates |
+
+MumbleLink reads GW2's built-in shared memory — no addon required. It updates every bot loop iteration (~150 ms).
+
+---
+
+### Route Recording
+Use this to build a real farming route from your manual play session.
+
+**Workflow:**
+1. Click **⏺ Start** — begins recording
+2. Mount up (`X`) and fly to each resource node
+3. Press **`F`** on each node — each harvest records a waypoint
+4. Watch the **Waypoints** counter increase
+5. When you've completed the loop, click **💾 Save Route**
+
+| Field | Description |
+|---|---|
+| Status | `RECORDING` (amber, pulsing) or `Idle` |
+| Waypoints | Number of positions recorded so far |
+| Saved Routes | Total routes on disk |
+
+**Buttons**: Start / Save Route / Discard
+
+> Waypoints are only added when you're at least 15 world units from the previous one, so hovering over one node doesn't create duplicates. Routes are locked to the first map you're on — if you teleport, the new positions are ignored.
+
+---
+
+### Policy Model
+| Field | Description |
+|---|---|
+| Latest Model | Model ID of the most recently trained artifact |
+| Samples | Number of policy signals the model was trained on |
+| Actions Learned | Number of distinct action types in the model |
+| Trained | Timestamp of last training run |
+
+**Button**: Train Now — triggers an immediate retrain from all accumulated telemetry.
+
+Auto-retrain runs every 5 minutes while the bot is active (`GW2_TRAINING_AUTO_RETRAIN_ENABLED=true`).
+
+---
+
+### Host Bridge
+| Field | Description |
+|---|---|
+| Bridge Status | `ENABLED` / `DISABLED` |
+| Capture Enabled | Whether screen capture is active |
+| Input Execution | Whether keyboard input is being sent to GW2 |
+| Frame Resolution | Captured screen resolution |
+
+---
 
 ### Recent Actions Log
-- **Live Feed**: See actions as they execute (navigate, harvest, interact)
-- **Reward + Step**: Track proxy reward and step progression per signal
-- **Prompt Visibility**: Shows whether gather prompt was detected for that step (`Prompt: yes/no`)
-- **Navigation Bias**: Shows steering bias from route waypoint direction (`Bias: -1/0/1`)
-- **Mount Events**: Shows remount transitions after gather (`Mount: remount`)
-- **Gather Lock Telemetry**: Shows temporary movement suppression window after gather (`gather_lock_remaining_ms`)
+Each row is one bot loop iteration (every ~150 ms). Columns:
+
+| Field | Description |
+|---|---|
+| Time | Timestamp of the step |
+| Action | `navigate`, `harvest`, or `interact` |
+| `[gather_lock]` tag | Input was suppressed — post-harvest lock active |
+| `[manual_input]` tag | Input was suppressed — you were touching the keyboard |
+| `🙋 manual` tag | Manual override window was active during this step |
+| Reward | Policy reward proxy for this step |
+| Step | Step counter |
+| Prompt | Whether the gather prompt was visible on screen |
+| Bias | Steering direction: `-1` left, `0` straight, `+1` right |
+| Mount | `remount` when the bot triggered a remount after harvest |
+
+---
 
 ### Settings
-- **Policy Confidence Threshold**: Adjust from 0.0 to 1.0
-- **Toggle Controls**: Enable/disable runtime policy and input execution
-- **Auto-retrain**: Configure continuous model training
+Display-only toggles and confidence slider. To persistently change settings, edit `.env` and restart.
 
-## Why Web Dashboard?
-
-✅ **No Focus Stealing**: Browser tabs don't steal focus from GW2  
-✅ **Network Accessible**: Control bot from any device on your network  
-✅ **Real-time Updates**: Live status and signal monitoring every 2 seconds  
-✅ **Modern UI**: Responsive design works on desktop, tablet, mobile  
-✅ **No Terminal Required**: Everything through intuitive web interface  
+---
 
 ## API Endpoints Used
 
-The dashboard leverages these existing API endpoints:
+### Run control
+- `GET /v1/run/status`
+- `POST /v1/run/start` / `/pause` / `/resume` / `/stop`
 
-- `GET /health` – Bridge status
-- `GET /v1/run/status` – Run status
-- `POST /v1/run/start` – Start run
-- `POST /v1/run/pause` / `/resume` – Pause/resume
-- `POST /v1/run/stop` – Stop run
-- `POST /v1/training/policy/train` – Train policy
-- `GET /v1/training/policy/versions` – Model versions
-- `GET /v1/telemetry/recent-signals` – Action log
+### Policy
+- `POST /v1/training/policy/train`
+- `GET /v1/training/policy/versions`
 
-Plus new dashboard endpoints for telemetry streaming.
+### Telemetry
+- `GET /v1/telemetry/recent-signals?limit=10`
 
-## Example Usage
+### Position & recording *(new)*
+- `GET /v1/discovery/position` — live MumbleLink snapshot
+- `POST /v1/discovery/record/start` — begin route recording
+- `POST /v1/discovery/record/stop` — save recorded route
+- `POST /v1/discovery/record/discard` — discard without saving
+- `GET /v1/discovery/record/status` — recording state + waypoint count
+- `GET /v1/discovery/routes` — list all saved routes
 
-1. **Open Dashboard**:
-   ```
-   http://localhost:8000
-   ```
+### Health
+- `GET /health`
 
-2. **Click "Start"** to begin autonomous operation
+---
 
-3. **Monitor in Browser**: Watch run status, recent actions, and model info update in real-time
+## Settings Reference
 
-4. **Adjust Settings**: Change confidence threshold or toggle features without restarting
-
-5. **Background Monitoring**: Tab can stay in background while you play GW2
-
-## Settings Persistence
-
-⚠️ **Note**: Settings shown in the dashboard are display-only. To persistently change bot behavior, update your `.env` file:
+To change bot behaviour permanently, edit `.env` and restart:
 
 ```bash
+# Loop speed (lower = smoother movement)
+GW2_RUNTIME_SIGNAL_INTERVAL_MS=150
+
+# Suppression windows
+GW2_RUNTIME_GATHER_LOCK_SECONDS=3.0
+GW2_RUNTIME_GATHER_PROMPT_LATCH_SECONDS=3.0
+GW2_RUNTIME_MANUAL_PAUSE_SECONDS=3.0
+
+# MumbleLink
+GW2_MUMBLE_LINK_ENABLED=true
+
+# Policy
 GW2_RUNTIME_POLICY_ENABLED=true
+GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7
 GW2_RUNTIME_INPUT_ENABLED=true
 GW2_RUNTIME_MOUNT_CYCLE_ENABLED=true
-GW2_RUNTIME_WAYPOINT_STEERING_ENABLED=true
-GW2_RUNTIME_GATHER_LOCK_SECONDS=1.6
-GW2_TRAINING_AUTO_RETRAIN_ENABLED=true
-GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7
-```
 
-Then restart the bot.
+# Training
+GW2_TRAINING_AUTO_RETRAIN_ENABLED=true
+GW2_TRAINING_RETRAIN_INTERVAL_SECONDS=300
+GW2_DEMO_AUTO_CAPTURE_ENABLED=true
+```

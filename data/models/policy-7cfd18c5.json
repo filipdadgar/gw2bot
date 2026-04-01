@@ -1,0 +1,151 @@
+{
+  "model_id": "policy-7cfd18c5",
+  "trained_at_utc": "2026-04-01T15:59:21.640683+00:00",
+  "sample_count": 269,
+  "action_count": 2,
+  "default_action": "harvest",
+  "action_stats": {
+    "navigate": {
+      "count": 171,
+      "avg_reward": 0.20116959064327486
+    },
+    "harvest": {
+      "count": 98,
+      "avg_reward": 1.0
+    }
+  },
+  "state_action_values": {
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 40,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 43,
+        "avg_reward": 0.19999999999999998
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.3,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 2,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 25,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 2,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 18,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 5,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 20,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 15,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 6,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 15,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 10,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 3,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 15,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 20,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 5,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 4,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 3,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.3,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":1.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2,\"gather_prompt_latched\":0.0,\"gather_prompt_visible\":0.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "navigate": {
+        "count": 15,
+        "avg_reward": 0.2
+      }
+    },
+    "{\"brightness\":0.2,\"contrast\":0.2,\"gather_prompt_latched\":1.0,\"gather_prompt_visible\":1.0,\"is_mounted\":0.0,\"manual_input_active\":0.0,\"map_id\":0.0,\"mount_index\":0.0,\"mumble_available\":0.0,\"nav_direction_bias\":-1.0,\"pos_x\":0.0,\"pos_z\":0.0,\"remount_pending\":0.0,\"waypoint_dist\":0.0}": {
+      "harvest": {
+        "count": 1,
+        "avg_reward": 1.0
+      }
+    },
+    "{\"brightness\":0.3,\"contrast\":0.2}": {
+      "navigate": {
+        "count": 1,
+        "avg_reward": 0.4
+      }
+    }
+  }
+}

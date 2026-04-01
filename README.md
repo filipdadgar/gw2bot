@@ -1,365 +1,217 @@
 # GW2 Farming Bot — Project Summary & Current State
 
-**Date**: 31 March 2026  
-**Status**: ✅ Core + Training Cross-Platform; Host Bridge Verified on macOS (Windows implemented, Linux pending)  
-**Phase**: Ready for Real Game Integration and Field Validation
+**Date**: 1 April 2026  
+**Status**: Active development — Windows native, real GW2 integration in progress  
+**Phase**: MumbleLink position tracking live; route recording and learning pipeline functional
 
 ---
 
 ## Mission
 
-Run GW2 automation as a zero-touch learning system on your own machine:
+A self-learning GW2 resource farming bot that:
 
-- Start GW2 and Docker Compose
-- Auto-start farming runs
-- Collect policy signals continuously
-- Retrain policy artifacts on schedule
-- Apply learned policy actions at runtime with confidence gating
-
-Mission mode is enabled by default through environment settings and is designed
-to reduce manual API intervention during normal operation.
+- Mounts up (`X`), flies around the map
+- Detects resource nodes and flies down to them
+- Presses `F` to harvest
+- Learns the route from your manual play via demonstration recording
+- Retrains its policy continuously to improve behaviour over time
 
 ---
 
-## What's Complete
+## What's Working Now
 
-### ✅ Orchestration & Control Flow
-- Discovery-first route generation with confidence scoring
-- Farm cycle orchestration with pause/resume/stop semantics
-- Cooldown loop restart with configurable intervals
-- Policy signal emission integrated into run lifecycle
+### ✅ Movement & Navigation
+- Runtime loop runs at **150 ms intervals** (was 1 s) — smooth, continuous movement
+- `W` key held for **400 ms** per step — fluid forward movement while flying/running
+- **Real steering** via MumbleLink cross-product: bot calculates left/right from the avatar's actual facing vector vs. waypoint direction (replaces pixel-delta guesswork)
+- Auto-advances route target waypoint when within 40 world units
+- Remount (`X`) triggered automatically after each harvest
 
-### ✅ Policy Training and Inference
-- Policy signal dataset parsing from JSONL telemetry
-- Runtime frame-derived policy signals when host bridge capture is available
-- Continuous background runtime signal loop while run state is `running`
-- Offline policy-table training with persisted model artifacts
-- Training endpoint: `POST /v1/training/policy/train`
-- Recommendation endpoint: `POST /v1/training/policy/recommend`
-- Version history endpoint: `GET /v1/training/policy/versions`
-- Scheduled retrain command: `gw2bot-retrain-scheduler --data-dir data --interval-seconds 1800`
-- In-app auto-retrain is enabled by mission defaults (`GW2_TRAINING_AUTO_RETRAIN_ENABLED=true`)
-- Runtime policy actions are enabled by mission defaults (`GW2_RUNTIME_POLICY_ENABLED=true`)
-- Runtime input execution is enabled by mission defaults (`GW2_RUNTIME_INPUT_ENABLED=true`)
-- Runtime mount cycle is enabled by mission defaults (`GW2_RUNTIME_MOUNT_CYCLE_ENABLED=true`)
-- Runtime waypoint steering bias is enabled by mission defaults (`GW2_RUNTIME_WAYPOINT_STEERING_ENABLED=true`)
-- Runtime gather lock window defaults to 1.6s (`GW2_RUNTIME_GATHER_LOCK_SECONDS=1.6`)
-- Runtime gather prompt latch defaults to 2.2s (`GW2_RUNTIME_GATHER_PROMPT_LATCH_SECONDS=2.2`)
-- Runtime policy confidence gate: `GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7`
-- Mission-mode autostart run is enabled by default (`GW2_AUTOSTART_RUN_ENABLED=true`)
-- Manual demonstration capture API: `/v1/training/demonstrations/start|record|stop`
-- Optional host input auto-capture for demos: `GW2_DEMO_AUTO_CAPTURE_ENABLED=true`
+### ✅ Manual Harvesting Protection
+- `ManualInputListener` fires `notify_manual_input()` on every key/click
+- Bot suppresses all input for **3 seconds** after each manual key (resets per keystroke)
+- Dashboard shows **Manual Override: ACTIVE** (amber, pulsing) while suppressed
+- Gather lock suppresses movement for **3 s** after bot-triggered harvests
 
-### ✅ API & Contracts
-- OpenAPI spec fully defined ([contracts/control-api.openapi.yaml](specs/001-gw2-resource-farm-bot/contracts/control-api.openapi.yaml))
-- All endpoints implemented and tested:
-  - Discovery: START, STATUS, STOP
-  - Run Lifecycle: START, STATUS, PAUSE, RESUME, STOP
-  - Telemetry: GET CYCLE SUMMARY, LIST ROUTES
-  - Training: TRAIN POLICY, RECOMMEND ACTION
-- Contract tests validating all endpoint schemas
+### ✅ Real Position Tracking (MumbleLink)
+- `MumbleLinkReader` reads GW2's built-in shared memory API — no addons, no permissions
+- Provides: world-space X/Y/Z, avatar facing vector, continent coordinates, map ID, mount index
+- Mount state (on foot / Jackal / Griffon / Springer / Skimmer / Raptor / Skyscale / etc.) exposed in state features and dashboard
+- Falls back gracefully if GW2 is not running
 
-### ✅ Testing
-- 25 tests passing (unit + integration + contract)
-- Performance benchmarks validating acceptance criteria:
-  - Discovery success ≥90% ✅
-  - Waypoint completion ≥95% ✅
-  - Harvest success ≥85% ✅
-  - Latency median ≤500ms ✅
-  - Latency p95 ≤900ms ✅
-  - Cooldown restart ≤5s ✅
+### ✅ Route Recording from Manual Play
+- **How**: Click "⏺ Start" in dashboard → fly your route → press `F` on each node → click "💾 Save Route"
+- Each `F` keypress records current MumbleLink position as a waypoint (min 15 world-unit spacing)
+- Saves real world coordinates — bot uses these for actual navigation, not placeholder `(100,100)`
+- Routes are locked to the first map seen so teleports don't corrupt them
+- Old placeholder routes should be deleted (see Data Reset below)
 
-### ✅ Monitoring & Telemetry
-- Event Writer for frame capture/detection/action logging
-- Cycle Summary Service aggregating metrics
-- JSONL-based telemetry storage
-- Real-time cycle progress tracking
+### ✅ Learning Pipeline (Fixed)
+- **Keypresses are now captured**: `DemonstrationRecorder` auto-starts a session so no explicit API call is needed
+- **State keys now match**: `normalize_state_key` buckets floats to 1 decimal place and excludes metadata fields (`gather_lock_remaining_ms`, `frame_width`, etc.) — states from different frames can now match in the policy table
+- **Meaningful rewards**: harvest=1.0, interact=0.8, navigate=0.2 (was `contrast+0.2` noise)
+- **Richer state features**: `is_mounted`, `mount_index`, `map_id`, `pos_x`, `pos_z`, `waypoint_dist`, `manual_input_active`, `gather_lock_remaining_ms`
+- Auto-retrain every 300 s while running
 
-### ✅ Optional Features (Phase 3)
-- Minimap-based detection candidate extraction
-- Dynamic prioritization policy scoring
-- Feature flags for optional enhancements
-- Candidate fusion pipeline
-
-### ✅ Docker & Deployment
-- Production Dockerfile with build dependencies
-- Docker Compose orchestration
-- Environment configuration via .env
-- Container health checks
-- Volume mounts for data persistence
-
-**Note**: Core orchestration, API, telemetry, and training are platform-agnostic in Docker. Host bridge capture/input is OS-specific and must be validated per host platform.
-
-**Learning Note**: While a run is active, the runtime loop continuously emits policy signals from host frames when capture is available. If unavailable, the runtime falls back to deterministic seed signals so training APIs remain usable.
-
-**Mission Mode Note (Windows + Docker)**: With the default `.env` mission settings, starting Compose automatically starts a farm run, collects policy signals continuously, applies runtime input actions through the host bridge, uses gather-prompt-aware interaction with remount transitions, and retrains policy artifacts on a fixed schedule. No manual training endpoint calls are required for ongoing finetuning.
-
-**Manual Learning Note**: You can record your own operator actions as labeled demonstration data, then call policy training to include those samples in subsequent models.
-
-### ✅ Documentation
-- Quickstart guide with copy-paste examples
-- Scenario-based step-by-step playbooks (first start, train after data, mission auto-play)
-- Operator runbook with troubleshooting
-- API OpenAPI spec
-- Data model and entity schemas
-- Research document with design decisions
-- Validation report with sign-off
+### ✅ Web Dashboard (`http://localhost:8000`)
+- **Run Status**: status badge, cycle ID, route, waypoint, Manual Override indicator, Gather Lock timer
+- **Player Position**: MumbleLink online/offline, mount name, map ID, world X/Z, continent X/Y
+- **Route Recording**: Start / Save / Discard buttons, live waypoint counter, saved route count
+- **Policy Model**: latest model ID, sample count, trained timestamp, Train Now button
+- **Host Bridge**: bridge enabled/disabled, capture status, frame resolution
+- **Recent Actions**: per-step action, reward, prompt visibility, nav bias, mount events, suppression reason tags
 
 ---
 
-## What's NOT Complete (Next Phase)
+## What's NOT Implemented (Stubs / Planned)
 
-### ✅ Host Bridge Implementation
-- **Frame Capture**: ✅ Cross-platform screen capture (macOS, Windows implemented; Linux pending)
-- **Input Automation**: ✅ Cross-platform mouse/keyboard control
-- **Window Management**: ✅ Window detection and focus (platform-aware)
+| Component | Status | Notes |
+|---|---|---|
+| `DiscoveryOrchestrator.start()` | ⚠️ Stub | Hardcodes fake scores; use Route Recording instead |
+| `NodeDetector` | ⚠️ Stub | Predictor hook is `None`; no computer vision for nodes yet |
+| `MinimapExtractor` | ⚠️ Stub | Data model exists but never called from the main loop |
+| Linux host bridge | ❌ Not started | macOS and Windows implemented |
 
-**Status**: Implemented for macOS and Windows with platform factory pattern; Linux bridge is pending.  
-**Docs**: [src/adapters/BRIDGE_README.md](src/adapters/BRIDGE_README.md) | [src/adapters/BRIDGE_CONFIG.md](src/adapters/BRIDGE_CONFIG.md)
-
-### ❌ Real Game Integration
-- Connection to live GW2 client
-- Node detection inference against real game screens
-- Route discovery with real game state
-
-**Status**: Orchestration and detection models ready; just needs real frame input.
+The **discovery auto-start** (`auto_discover_if_missing=True`) now reuses the most recent saved route instead of generating a new identical placeholder each startup.
 
 ---
 
-## Running the Bot Right Now
+## Data Reset (Important)
 
-### Option 1: Docker Compose (Recommended for Production)
-```bash
-cd /Users/filipdadgar/dev/gw2bot
-docker-compose up -d
-```
-
-### Option 2: Native Windows Setup (Direct Python)
-For Windows machines, you can run the bot without Docker. See [Windows Native Setup Guide](docs/operations/WINDOWS_NATIVE_SETUP.md) for step-by-step instructions from repo clone to first run.
-
-### Option 3: Docker Desktop on Windows
-Same as Option 1, but ensure Docker Desktop is installed and running on Windows.
-
-### Test the API
-Works with either Docker Compose or native Windows setup:
+If you have existing data from before 1 April 2026, it was recorded with broken state keys and placeholder routes. Clear it:
 
 ```bash
-# Health check
-curl http://127.0.0.1:8000/v1/run/status
-
-# Discover a route
-curl -X POST http://127.0.0.1:8000/v1/discovery/start \
-  -H "Content-Type: application/json" \
-  -d '{"max_duration_seconds":60,"min_loop_confidence":0.7}'
-
-# Start farming
-curl -X POST http://127.0.0.1:8000/v1/run/start \
-  -H "Content-Type: application/json" \
-  -d '{"auto_discover_if_missing":true}'
-
-# Control lifecycle
-curl -X POST http://127.0.0.1:8000/v1/run/pause
-curl -X POST http://127.0.0.1:8000/v1/run/resume
-curl -X POST http://127.0.0.1:8000/v1/run/stop
-
-# View routes and telemetry
-curl http://127.0.0.1:8000/v1/routes
-curl http://127.0.0.1:8000/v1/cycle/summary
+# From the gw2bot directory
+rm data/telemetry/policy-signals.jsonl   # broken state key format
+rm data/models/policy-*.json             # trained on broken data
+rm data/routes/route-*.json              # all identical (100,100)→(220,220)
 ```
 
-Full API documentation: `http://127.0.0.1:8000/docs` (once the bot is running)
-```
+Keep `data/telemetry/discovery-sessions.jsonl` — that's just an audit log.
 
-### Run Full Test Suite
+---
+
+## Getting Started (Windows Native)
+
+See [Windows Native Setup Guide](docs/operations/WINDOWS_NATIVE_SETUP.md) for full installation.
+
+### Quick Start
+
 ```bash
-.venv/bin/python -m pytest -q
+# Start the API
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+
+# Open dashboard
+http://localhost:8000
 ```
 
-### Watch Logs
-```bash
-docker-compose logs -f
-```
+### First-Time Route Recording Workflow
 
-### Stop Everything
-```bash
-docker-compose down
-```
+1. Start GW2 and load into the map you want to farm
+2. Open `http://localhost:8000` in a browser
+3. Check **Player Position** card — MumbleLink should show "Connected"
+4. Click **⏺ Start** in the Route Recording card
+5. Mount up (`X`), fly to each resource node, press `F` to harvest
+6. Watch the **Waypoints** counter increase with each harvest
+7. When you've covered the full loop, click **💾 Save Route**
+8. The bot will now use those real coordinates for navigation
+
+### After Recording a Route
+
+The bot auto-starts on API launch (`GW2_AUTOSTART_RUN_ENABLED=true`). Let it run alongside your play session. It will:
+
+- Navigate using the real waypoints you recorded
+- Steer based on your avatar's actual facing direction (MumbleLink)
+- Suppress its own input for 3 s whenever you touch the keyboard
+- Record your keypresses as training data automatically
+- Retrain the policy every 5 minutes
 
 ---
 
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    FastAPI Control API                      │
-│  /discovery/start, /run/start, /run/pause, /run/resume ...  │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│              Orchestration Layer                             │
-│  • DiscoveryOrchestrator: Route exploration & scoring       │
-│  • FarmCycleOrchestrator: Run lifecycle & cooldown loop    │
-│  • ControlCommands: Pause/Resume/Stop safety checks        │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│            Core Service Modules (Domain Layer)               │
-│                                                               │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │   Capture    │  │  Detection   │  │  Navigation  │       │
-│  │ frame_cap    │  │ node_detect  │  │ waypoint_nav │       │
-│  └──────────────┘  └──────────────┘  └──────────────┘       │
-│                                                               │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
-│  │  Discovery   │  │   Actions    │  │   Telemetry  │       │
-│  │ route_builder│  │harvest_exec  │  │ event_writer │       │
-│  └──────────────┘  └──────────────┘  └──────────────┘       │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│              Host Bridge Layer ✅ IMPLEMENTED                │
-│                                                               │
-│  ┌──────────────────────┐  ┌──────────────────────┐         │
-│  │  CaptureBridge       │  │  InputBridge         │         │
-│  │  (frame capture)     │  │  (mouse/keyboard)    │         │
-│  │  ✅ macOS impl       │  │  ✅ macOS impl       │         │
-│  │  ✅ Windows impl     │  │  ✅ Windows impl     │         │
-│  │  📋 Linux planned    │  │  📋 Linux planned    │         │
-│  └──────────────────────┘  └──────────────────────┘         │
-└─────────────────┬───────────────────────────────────────────┘
-                  │
-┌─────────────────▼───────────────────────────────────────────┐
-│           Operating System & GW2 Client                      │
-│  • Screen capture API (Quartz/X11/GDI)                      │
-│  • Input automation (pynput/xdotool/SendInput)              │
-│  • GW2 game window (currently not connected)                │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                     FastAPI Control API                         │
+│  /run/*, /discovery/*, /training/*, /telemetry/*                │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────────────────┐
+│                  Orchestration Layer                             │
+│  • FarmCycleOrchestrator  — 150 ms loop, MumbleLink steering    │
+│  • DiscoveryOrchestrator  — (stub; use Route Recording)         │
+│  • ControlCommands        — pause / resume / stop               │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────────────────┐
+│               Core Service Modules                               │
+│                                                                   │
+│  Capture          Detection         Navigation                   │
+│  frame_cap_svc    node_detector*    waypoint_navigator           │
+│  interact_detect  minimap_ext*      route_recorder ✅ NEW        │
+│                                                                   │
+│  Training                           Telemetry                   │
+│  demo_recorder ✅ fixed             event_writer                 │
+│  manual_input_listener ✅ fixed     cycle_summary_svc            │
+│  policy_trainer ✅ fixed            policy_signal_emitter        │
+│  policy_registry                                                 │
+│                                                                   │
+│  * stub — no real inference wired                                │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────────────────┐
+│                   Host Bridge Layer                              │
+│                                                                   │
+│  WindowsCaptureBridge   WindowsInputBridge   MumbleLinkReader   │
+│  (screen capture)       (keyboard/mouse)     ✅ NEW — position  │
+│  macOS impl available   macOS impl available  Windows only       │
+└──────────────────────┬──────────────────────────────────────────┘
+                       │
+┌──────────────────────▼──────────────────────────────────────────┐
+│              GW2 Client (Windows)                                │
+│  • Screen capture via GDI                                        │
+│  • Input via pynput / SendInput                                  │
+│  • Position via MumbleLink shared memory (built-in GW2 API)     │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Data Flow: Discovery-to-Farming
+## Environment Configuration (`.env`)
 
-```
-User Issues Command
-       │
-       ▼
-API Route Handler (/v1/run/start with auto_discover_if_missing=true)
-       │
-       ▼
-FarmCycleOrchestrator.start()
-       │
-       ├─► Route not found; call DiscoveryOrchestrator.start()
-       │        │
-       │        ▼
-       │   RouteBuilder.score_loop() —► Confidence score
-       │        │
-       │        ▼
-       │   If confidence ≥ min_threshold:
-       │      • Persist route to disk
-       │      • Return generated_route_id
-       │        │
-       │        ▼
-       │   Return to FarmCycleOrchestrator
-       │
-       ▼
-FarmCycleOrchestrator transitions to RUNNING
-       │
-       ├─► Core farming loop begins (mocked in current build):
-       │    • FrameCaptureService.capture_frame() [MOCKED]
-       │    • NodeDetector.detect() on frame [MOCKED]
-       │    • WaypointNavigator.next_index() [REAL]
-       │    • HarvestExecutor.execute() [MOCKED]
-       │
-       ▼
-EventWriter logs all events to JSONL
-       │
-       ▼
-CycleSummaryService aggregates metrics
-       │
-       ├─► On pause: Preserve state, transition to PAUSED
-       ├─► On resume: Restore state, transition back to RUNNING
-       └─► On stop: Complete cycle, emit final telemetry
-            │
-            ▼
-        return to IDLE, cycle summary available via API
-```
-
----
-
-## What Comes Next
-
-### Immediate (Week 1-2)
-1. **Validate Host Bridge** for your target platform:
-       - Verify frame capture against live GW2 window
-       - Verify input routing reliability under sustained runs
-   - See [bridge-implementation-guide.md](docs/development/bridge-implementation-guide.md)
-
-2. **Platform-Specific Testing**:
-   - Test frame capture on live GW2 window
-   - Test input routing to game
-   - Validate latency in reference environment
-
-### Short Term (Week 3-4)
-3. **Integration Testing**:
-   - Run discovery → farm loop with real game state
-   - Validate detection accuracy on live screens
-   - Benchmark discovery success rate on real routes
-
-4. **Field Validation**:
-   - 8-hour soak test with real gameplay
-   - Collect performance metrics (latency, discovery rate, etc.)
-   - Iterate on prioritization weights if needed
-
-### Medium Term (Month 2)
-5. **Policy Quality Upgrades**:
-   - Expand state feature set from live gameplay captures
-   - Benchmark learned policy against baseline prioritization
-   - Promote model refresh cadence with automated validation
-
----
-
-## Deployment
-
-### Development
-```bash
-# Local testing with docker-compose
-docker-compose up -d
-```
-
-### Production
-1. Set `GW2_HOST_BRIDGE_ENABLED=true` in `.env`
-2. Verify bridge behavior on your host setup (window focus, capture, input)
-3. Run performance validation tests
-4. Deploy updated container
-5. Monitor logs for bridge failures
+| Variable | Default | Description |
+|---|---|---|
+| `GW2_RUNTIME_SIGNAL_INTERVAL_MS` | `150` | Bot loop interval in ms |
+| `GW2_RUNTIME_GATHER_LOCK_SECONDS` | `3.0` | Movement suppression after bot harvest |
+| `GW2_RUNTIME_GATHER_PROMPT_LATCH_SECONDS` | `3.0` | Sticky harvest intent window |
+| `GW2_RUNTIME_MANUAL_PAUSE_SECONDS` | `3.0` | Suppression window after manual input |
+| `GW2_MUMBLE_LINK_ENABLED` | `true` | Enable MumbleLink position reading |
+| `GW2_RUNTIME_POLICY_ENABLED` | `true` | Use trained policy for action selection |
+| `GW2_RUNTIME_INPUT_ENABLED` | `true` | Send actual keyboard input |
+| `GW2_RUNTIME_MOUNT_CYCLE_ENABLED` | `true` | Auto-remount after harvest |
+| `GW2_RUNTIME_WAYPOINT_STEERING_ENABLED` | `true` | Use waypoints for steering bias |
+| `GW2_RUNTIME_POLICY_MIN_CONFIDENCE` | `0.7` | Minimum policy confidence to act |
+| `GW2_TRAINING_AUTO_RETRAIN_ENABLED` | `true` | Retrain policy on schedule |
+| `GW2_TRAINING_RETRAIN_INTERVAL_SECONDS` | `300` | Retrain interval (5 min) |
+| `GW2_AUTOSTART_RUN_ENABLED` | `true` | Auto-start bot on API startup |
+| `GW2_DEMO_AUTO_CAPTURE_ENABLED` | `true` | Always capture manual keypresses |
 
 ---
 
 ## Key Files Reference
 
 | Purpose | File |
-|---------|------|
-| **Bridge Interfaces** | [src/adapters/bridge_interfaces.py](src/adapters/bridge_interfaces.py) |
-| **API Definition** | [src/api/main.py](src/api/main.py) |
-| **Orchestration** | [src/core/orchestration/](src/core/orchestration/) |
-| **OpenAPI Spec** | [specs/001-gw2-resource-farm-bot/contracts/control-api.openapi.yaml](specs/001-gw2-resource-farm-bot/contracts/control-api.openapi.yaml) |
-| **Bridge Implementation Guide** | [docs/development/bridge-implementation-guide.md](docs/development/bridge-implementation-guide.md) |
-| **Quickstart** | [specs/001-gw2-resource-farm-bot/quickstart.md](specs/001-gw2-resource-farm-bot/quickstart.md) |
-| **Operator Runbook** | [docs/operations/gw2bot-runbook.md](docs/operations/gw2bot-runbook.md) |
-| **Validation Report** | [specs/001-gw2-resource-farm-bot/validation-report.md](specs/001-gw2-resource-farm-bot/validation-report.md) |
-
----
-
-## Questions?
-
-- **How do I run the bot right now?** → See "Running the Bot Right Now" above
-- **Can I use it with real GW2?** → Yes on macOS/Windows where host bridge permissions and focus are correctly configured; Linux bridge is still pending.
-- **What needs to happen next?** → Complete Linux bridge and do broader field validation with live gameplay.
-- **Is the API stable?** → Yes; fully tested and OpenAPI-documented
-- **Can I add custom detection logic?** → Yes; implement `NodeDetector` subclass
-- **How do I monitor performance?** → Check telemetry summaries and performance benchmarks in tests
-
----
-
-**Status**: Ready for live host validation on macOS/Windows and Linux bridge completion.
+|---|---|
+| **Bot main loop** | [src/core/orchestration/farm_cycle_orchestrator.py](src/core/orchestration/farm_cycle_orchestrator.py) |
+| **MumbleLink reader** | [src/adapters/mumble_link_reader.py](src/adapters/mumble_link_reader.py) |
+| **Route recorder** | [src/core/navigation/route_recorder.py](src/core/navigation/route_recorder.py) |
+| **Gather prompt detection** | [src/core/capture/interaction_prompt_detector.py](src/core/capture/interaction_prompt_detector.py) |
+| **Policy state key** | [src/core/training/policy_signal_dataset.py](src/core/training/policy_signal_dataset.py) |
+| **Manual input listener** | [src/core/training/manual_input_listener.py](src/core/training/manual_input_listener.py) |
+| **Discovery & recording API** | [src/api/routes/discovery.py](src/api/routes/discovery.py) |
+| **App wiring** | [src/api/main.py](src/api/main.py) |
+| **Dashboard** | [src/api/static/dashboard.html](src/api/static/dashboard.html) |
+| **Settings** | [src/config/settings.py](src/config/settings.py) |
+| **Windows input bridge** | [src/adapters/windows_input_bridge.py](src/adapters/windows_input_bridge.py) |
+| **Operator runbook** | [docs/operations/gw2bot-runbook.md](docs/operations/gw2bot-runbook.md) |
+| **Dashboard guide** | [docs/DASHBOARD.md](docs/DASHBOARD.md) |

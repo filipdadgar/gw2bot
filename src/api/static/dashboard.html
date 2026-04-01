@@ -543,9 +543,9 @@
             <div class="card">
                 <h2>Route Recording</h2>
                 <div class="alert alert-info" style="margin-bottom:10px;font-size:0.9em;">
-                    Press <strong>Start Recording</strong>, fly your farming route and press
-                    <strong>F</strong> on each node. Each harvest records a waypoint.
-                    Press <strong>Save Route</strong> when done.
+                    Press <strong>Start Recording</strong> — the bot pauses automatically
+                    so it won't interfere. Fly your route and press <strong>F</strong> on
+                    each node. Press <strong>Save Route</strong> when done; the bot resumes.
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">Status:</span>
@@ -773,13 +773,25 @@
             if (!pos) return;
 
             const mumbleEl = document.getElementById('mumbleStatus');
-            if (!pos.available) {
-                mumbleEl.textContent = 'Offline';
-                mumbleEl.className = 'status-badge status-stopped';
+            const clear = () => {
                 document.getElementById('mountName').textContent = '—';
                 document.getElementById('mapId').textContent = '—';
                 document.getElementById('worldPos').textContent = '—';
                 document.getElementById('continentPos').textContent = '—';
+            };
+
+            if (!pos.available) {
+                if (pos.mmap_open) {
+                    // Shared memory opened but tick=0 — GW2 is on char select or loading
+                    mumbleEl.textContent = 'Not in map';
+                    mumbleEl.className = 'status-badge status-paused';
+                } else {
+                    // Could not open shared memory at all
+                    const reason = pos.reason === 'mumble_disabled' ? 'Disabled' : 'GW2 not running';
+                    mumbleEl.textContent = reason;
+                    mumbleEl.className = 'status-badge status-stopped';
+                }
+                clear();
                 return;
             }
 
@@ -859,8 +871,23 @@
             document.getElementById('confidenceValue').textContent = parseFloat(this.value).toFixed(2);
         });
 
+        // Load config and set toggle states
+        async function loadConfig() {
+            try {
+                const cfg = await fetchAPI('/v1/run/config');
+                if (!cfg) return;
+                const pe = document.getElementById('policyEnabled');
+                const ie = document.getElementById('inputEnabled');
+                const re = document.getElementById('retrainEnabled');
+                if (pe) pe.checked = !!cfg.policy_enabled;
+                if (ie) ie.checked = !!cfg.input_enabled;
+                if (re) re.checked = !!cfg.auto_retrain_enabled;
+            } catch (e) { /* ignore */ }
+        }
+
         // Initial load
         async function initialize() {
+            await loadConfig();
             await refreshAll();
             if (refreshInterval) clearInterval(refreshInterval);
             refreshInterval = setInterval(refreshAll, REFRESH_INTERVAL);

@@ -92,3 +92,21 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
 def get_run_status(request: Request) -> dict[str, object]:
     orchestrator = request.app.state.farm_cycle_orchestrator
     return _snapshot_to_response(orchestrator.status())
+
+
+@router.get("/config")
+def get_run_config(request: Request) -> dict[str, object]:
+    """Return current runtime settings from the loaded .env configuration."""
+    s = request.app.state.settings
+    return {
+        "policy_enabled": bool(s.gw2_runtime_policy_enabled),
+        "input_enabled": bool(s.gw2_runtime_input_enabled),
+        "mount_cycle_enabled": bool(s.gw2_runtime_mount_cycle_enabled),
+        "waypoint_steering_enabled": bool(s.gw2_runtime_waypoint_steering_enabled),
+        "auto_retrain_enabled": bool(s.gw2_training_auto_retrain_enabled),
+        "demo_capture_enabled": bool(s.gw2_demo_auto_capture_enabled),
+        "mumble_link_enabled": bool(s.gw2_mumble_link_enabled),
+        "gather_lock_seconds": float(s.gw2_runtime_gather_lock_seconds),
+        "manual_pause_seconds": float(s.gw2_runtime_manual_pause_seconds),
+        "signal_interval_ms": int(s.gw2_runtime_signal_interval_ms),
+    }

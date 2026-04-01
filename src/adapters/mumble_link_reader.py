@@ -157,7 +157,14 @@ class MumbleLinkReader:
         return self._available
 
     def read(self) -> MumbleLinkData:
-        """Return the latest MumbleLink snapshot, or an unavailable stub."""
+        """Return the latest MumbleLink snapshot, or an unavailable stub.
+
+        If the reader was never successfully opened (e.g. bot started before
+        GW2), this retries the open on every call so it connects automatically
+        once GW2 launches.
+        """
+        if not self._available or self._mmap is None:
+            self._try_open()          # retry — GW2 may have started since boot
         if not self._available or self._mmap is None:
             return MumbleLinkData(available=False)
 

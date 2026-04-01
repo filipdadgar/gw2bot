@@ -44,22 +44,38 @@ def stop_discovery(request: Request) -> dict[str, object]:
 
 @router.post("/record/start", status_code=202)
 def start_route_recording(request: Request) -> dict[str, object]:
-    """Begin recording player positions.  Press F on each resource node to add
-    a waypoint.  Call /record/stop to save the route when done."""
+    """Begin recording player positions.
+
+    Automatically pauses the bot run so it does not send movement keys while
+    you are flying the route manually.  Press F on each resource node to add
+    a waypoint.  Call /record/stop to save the route when done.
+    """
     recorder = getattr(request.app.state, "route_recorder", None)
     if recorder is None:
         return {"ok": False, "error": "route_recorder_unavailable"}
+
+    # Pause the active run so bot keys don't interfere with manual flying.
+    orchestrator = getattr(request.app.state, "farm_cycle_orchestrator", None)
+    bot_paused = orchestrator.pause() if orchestrator is not None else False
+
     recorder.start()
-    return {"ok": True, "recording": True, "waypoint_count": 0}
+    return {"ok": True, "recording": True, "waypoint_count": 0, "bot_paused": bot_paused}
 
 
 @router.post("/record/stop")
 def stop_route_recording(request: Request) -> dict[str, object]:
-    """Stop recording and persist the route.  Returns the new route_id."""
+    """Stop recording, persist the route, and resume the bot run."""
     recorder = getattr(request.app.state, "route_recorder", None)
     if recorder is None:
         return {"ok": False, "error": "route_recorder_unavailable"}
+
     route_id = recorder.stop_and_save()
+
+    # Resume the bot regardless of save outcome.
+    orchestrator = getattr(request.app.state, "farm_cycle_orchestrator", None)
+    if orchestrator is not None:
+        orchestrator.resume()
+
     if route_id is None:
         status = recorder.status()
         return {
@@ -72,11 +88,17 @@ def stop_route_recording(request: Request) -> dict[str, object]:
 
 @router.post("/record/discard")
 def discard_route_recording(request: Request) -> dict[str, object]:
-    """Discard the current recording without saving."""
+    """Discard the current recording without saving, and resume the bot run."""
     recorder = getattr(request.app.state, "route_recorder", None)
     if recorder is None:
         return {"ok": False, "error": "route_recorder_unavailable"}
+
     recorder.discard()
+
+    orchestrator = getattr(request.app.state, "farm_cycle_orchestrator", None)
+    if orchestrator is not None:
+        orchestrator.resume()
+
     return {"ok": True, "recording": False}
 
 
@@ -101,15 +123,27 @@ def get_route_recording_status(request: Request) -> dict[str, object]:
 
 @router.get("/position")
 def get_player_position(request: Request) -> dict[str, object]:
-    """Return the current MumbleLink player position snapshot."""
+    """Return the current MumbleLink player position snapshot.
+
+    mmap_open: whether the shared memory block was successfully opened.
+    available: mmap open AND GW2 is in a playable map (tick > 0).
+    If mmap_open=true but available=false, GW2 is on character select or loading.
+    """
     reader = getattr(request.app.state, "mumble_reader", None)
-    if reader is None or not reader.available:
-        return {"available": False}
-    data = reader.read()
+    if reader is None:
+        return {"available": False, "mmap_open": False, "reason": "mumble_disabled"}
+
+    data = reader.read()  # reader retries open internally if needed
+
+    if not reader.available:
+        return {"available": False, "mmap_open": False, "reason": "gw2_not_running"}
+
     if not data.available:
-        return {"available": False}
+        return {"available": False, "mmap_open": True, "reason": "not_in_map"}
+
     return {
         "available": True,
+        "mmap_open": True,
         "avatar_x": round(data.avatar_x, 2),
         "avatar_y": round(data.avatar_y, 2),
         "avatar_z": round(data.avatar_z, 2),
