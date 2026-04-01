@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from fastapi import APIRouter, Request
 
@@ -14,7 +13,7 @@ router = APIRouter(prefix="/v1/telemetry", tags=["telemetry"])
 def get_recent_signals(request: Request, limit: int = 10) -> dict[str, object]:
     """Get recent policy signals for dashboard display."""
     storage = request.app.state.storage
-    signals_file = Path(storage.base_path) / "telemetry" / "policy-signals.jsonl"
+    signals_file = storage.telemetry_dir / "policy-signals.jsonl"
     
     signals = []
     if signals_file.exists():
