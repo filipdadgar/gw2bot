@@ -4,6 +4,8 @@
 
 This runbook covers operating the GW2 Resource Farming Bot in production using the discovery-first architecture under Docker.
 
+**Alternative Setup**: For Windows machines, you can run the bot without Docker. See [Windows Native Setup Guide](WINDOWS_NATIVE_SETUP.md) for direct Python installation.
+
 ## Prerequisites
 
 - Docker and Docker Compose installed

@@ -123,13 +123,21 @@ to reduce manual API intervention during normal operation.
 
 ## Running the Bot Right Now
 
-### Start the Stack
+### Option 1: Docker Compose (Recommended for Production)
 ```bash
 cd /Users/filipdadgar/dev/gw2bot
 docker-compose up -d
 ```
 
+### Option 2: Native Windows Setup (Direct Python)
+For Windows machines, you can run the bot without Docker. See [Windows Native Setup Guide](docs/operations/WINDOWS_NATIVE_SETUP.md) for step-by-step instructions from repo clone to first run.
+
+### Option 3: Docker Desktop on Windows
+Same as Option 1, but ensure Docker Desktop is installed and running on Windows.
+
 ### Test the API
+Works with either Docker Compose or native Windows setup:
+
 ```bash
 # Health check
 curl http://127.0.0.1:8000/v1/run/status
@@ -148,6 +156,13 @@ curl -X POST http://127.0.0.1:8000/v1/run/start \
 curl -X POST http://127.0.0.1:8000/v1/run/pause
 curl -X POST http://127.0.0.1:8000/v1/run/resume
 curl -X POST http://127.0.0.1:8000/v1/run/stop
+
+# View routes and telemetry
+curl http://127.0.0.1:8000/v1/routes
+curl http://127.0.0.1:8000/v1/cycle/summary
+```
+
+Full API documentation: `http://127.0.0.1:8000/docs` (once the bot is running)
 ```
 
 ### Run Full Test Suite
