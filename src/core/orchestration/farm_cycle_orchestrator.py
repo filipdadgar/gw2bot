@@ -262,8 +262,7 @@ class FarmCycleOrchestrator:
         if float(state_features.get("gather_prompt_visible", 0.0)) >= 0.5:
             return "harvest"
 
-        brightness = float(state_features.get("brightness", 0.0))
-        fallback_action = "harvest" if brightness > 0.6 else "navigate"
+        fallback_action = "navigate"
 
         if not policy_enabled or not getattr(policy_registry, "has_artifact", lambda: False)():
             return fallback_action
@@ -272,6 +271,8 @@ class FarmCycleOrchestrator:
         action = str(recommendation.get("action", fallback_action))
         confidence = float(recommendation.get("confidence", 0.0))
         if confidence < policy_min_confidence:
+            return fallback_action
+        if action in {"harvest", "interact"}:
             return fallback_action
         return action
 

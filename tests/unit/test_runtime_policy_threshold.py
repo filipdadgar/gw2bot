@@ -15,7 +15,7 @@ class _PolicyRegistryStub:
 
 def test_select_action_uses_policy_when_confident() -> None:
     state = {"brightness": 0.2}
-    registry = _PolicyRegistryStub(confidence=0.9, action="interact")
+    registry = _PolicyRegistryStub(confidence=0.9, action="navigate")
 
     action = FarmCycleOrchestrator._select_action(
         state_features=state,
@@ -24,7 +24,7 @@ def test_select_action_uses_policy_when_confident() -> None:
         policy_min_confidence=0.7,
     )
 
-    assert action == "interact"
+    assert action == "navigate"
 
 
 def test_select_action_falls_back_when_low_confidence() -> None:
@@ -38,7 +38,7 @@ def test_select_action_falls_back_when_low_confidence() -> None:
         policy_min_confidence=0.7,
     )
 
-    assert action == "harvest"
+    assert action == "navigate"
 
 
 def test_select_action_uses_fallback_when_policy_disabled() -> None:
@@ -49,6 +49,20 @@ def test_select_action_uses_fallback_when_policy_disabled() -> None:
         state_features=state,
         policy_registry=registry,
         policy_enabled=False,
+        policy_min_confidence=0.7,
+    )
+
+    assert action == "navigate"
+
+
+def test_select_action_does_not_allow_policy_harvest_without_prompt() -> None:
+    state = {"brightness": 0.2, "gather_prompt_visible": 0.0}
+    registry = _PolicyRegistryStub(confidence=0.99, action="harvest")
+
+    action = FarmCycleOrchestrator._select_action(
+        state_features=state,
+        policy_registry=registry,
+        policy_enabled=True,
         policy_min_confidence=0.7,
     )
 

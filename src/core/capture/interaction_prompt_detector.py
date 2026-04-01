@@ -19,11 +19,11 @@ def detect_gather_prompt_visible(frame: np.ndarray) -> bool:
     if height < 64 or width < 64:
         return False
 
-    # Prompt tends to appear near the lower-center viewport area.
-    y0 = int(height * 0.58)
-    y1 = int(height * 0.88)
-    x0 = int(width * 0.28)
-    x1 = int(width * 0.72)
+    # Prompt tends to appear in a compact lower-center zone above the skill bar.
+    y0 = int(height * 0.60)
+    y1 = int(height * 0.78)
+    x0 = int(width * 0.39)
+    x1 = int(width * 0.66)
     roi = frame[y0:y1, x0:x1]
 
     if roi.size == 0:
@@ -45,4 +45,19 @@ def detect_gather_prompt_visible(frame: np.ndarray) -> bool:
     orange_ratio = float(orange_mask.mean())
     dark_ratio = float(dark_mask.mean())
 
-    return orange_ratio >= 0.0010 and dark_ratio >= 0.10
+    if orange_ratio < 0.002 or orange_ratio > 0.14:
+        return False
+    if dark_ratio < 0.22:
+        return False
+
+    ys, xs = np.where(orange_mask)
+    if ys.size == 0 or xs.size == 0:
+        return False
+
+    # Prompt accent is typically elongated horizontally and not full-height.
+    h = ys.max() - ys.min() + 1
+    w = xs.max() - xs.min() + 1
+    roi_h, roi_w = orange_mask.shape
+    width_frac = float(w) / float(roi_w)
+    height_frac = float(h) / float(roi_h)
+    return width_frac >= 0.18 and height_frac <= 0.48
