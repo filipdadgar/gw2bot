@@ -148,6 +148,7 @@ Mission defaults in `.env` already enable:
 2. Runtime policy actions
 3. Runtime input execution through host bridge
 4. Continuous in-app retraining
+5. Mount-cycle remount behavior and waypoint steering bias
 
 Step-by-step:
 
@@ -190,6 +191,12 @@ Optional validation for deterministic gathering:
 - When close to a resource node and the in-game gather prompt is visible,
   `state_features.gather_prompt_visible` should appear as `1.0` in recent signals.
 - For those steps, runtime action should resolve to `harvest`.
+
+Optional validation for mount-cycle pathing behavior:
+- During travel, `state_features.nav_direction_bias` should periodically show
+  `-1`, `0`, or `1` based on route waypoint deltas.
+- After gather actions, a subsequent navigate step should include
+  `state_features.mount_action=remount` before travel continues.
 
 5. Operator control calls (if needed):
 

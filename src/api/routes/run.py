@@ -51,6 +51,8 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
             policy_registry=policy_registry,
             policy_enabled=bool(settings.gw2_runtime_policy_enabled),
             input_enabled=bool(settings.gw2_runtime_input_enabled),
+            mount_cycle_enabled=bool(settings.gw2_runtime_mount_cycle_enabled),
+            waypoint_steering_enabled=bool(settings.gw2_runtime_waypoint_steering_enabled),
             policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
             interval_seconds=interval_seconds,
         )

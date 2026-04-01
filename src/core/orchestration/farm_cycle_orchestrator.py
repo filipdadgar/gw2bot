@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
+import json
 import logging
 from pathlib import Path
 import threading
@@ -41,6 +42,10 @@ class FarmCycleOrchestrator:
         self._signal_store = PolicySignalStore(storage)
         self._runtime_thread: threading.Thread | None = None
         self._runtime_stop_event = threading.Event()
+        self._runtime_waypoints: list[dict[str, int]] = []
+        self._runtime_remount_pending = False
+        self._runtime_mount_cycle_enabled = True
+        self._runtime_waypoint_steering_enabled = True
         self._snapshot = RunSnapshot(
             cycle_id=None,
             route_id=None,
@@ -87,6 +92,9 @@ class FarmCycleOrchestrator:
                 last_error="route_not_found",
             )
             return self._snapshot
+
+        self._runtime_waypoints = self._load_route_waypoints(route_file)
+        self._runtime_remount_pending = False
 
         self._snapshot = RunSnapshot(
             cycle_id=f"cycle-{uuid4().hex[:8]}",
@@ -139,12 +147,16 @@ class FarmCycleOrchestrator:
         input_enabled: bool,
         policy_min_confidence: float,
         interval_seconds: float,
+        mount_cycle_enabled: bool = True,
+        waypoint_steering_enabled: bool = True,
     ) -> None:
         """Start a background loop that emits policy signals while run is active."""
 
         if self._runtime_thread is not None and self._runtime_thread.is_alive():
             return
 
+        self._runtime_mount_cycle_enabled = bool(mount_cycle_enabled)
+        self._runtime_waypoint_steering_enabled = bool(waypoint_steering_enabled)
         self._runtime_stop_event.clear()
 
         def _worker() -> None:
@@ -194,6 +206,12 @@ class FarmCycleOrchestrator:
                             "gather_prompt_visible": 0.0,
                         }
 
+                    nav_direction_bias = self._compute_route_direction_bias(
+                        step_index=self._snapshot.current_waypoint_index
+                    )
+                    state_features["nav_direction_bias"] = float(nav_direction_bias)
+                    state_features["remount_pending"] = 1.0 if self._runtime_remount_pending else 0.0
+
                     action_taken = self._select_action(
                         state_features=state_features,
                         policy_registry=policy_registry,
@@ -202,11 +220,24 @@ class FarmCycleOrchestrator:
                     )
 
                     if input_enabled and input_bridge is not None:
+                        if (
+                            self._runtime_mount_cycle_enabled
+                            and action_taken == "navigate"
+                            and self._runtime_remount_pending
+                        ):
+                            self._tap_key(input_bridge=input_bridge, key="x", hold_seconds=0.06)
+                            self._runtime_remount_pending = False
+                            state_features["mount_action"] = "remount"
+
                         self._execute_runtime_action(
                             action_taken=action_taken,
                             input_bridge=input_bridge,
                             step_index=self._snapshot.current_waypoint_index,
+                            direction_bias=nav_direction_bias,
                         )
+
+                        if self._runtime_mount_cycle_enabled and action_taken in {"harvest", "interact"}:
+                            self._runtime_remount_pending = True
 
                     reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
                     self.emit_runtime_policy_signal(
@@ -217,6 +248,7 @@ class FarmCycleOrchestrator:
                     )
                     self._snapshot.current_waypoint_index += 1
                 except Exception:
+                    logger.exception("runtime_loop_iteration_failed")
                     self.seed_policy_signals()
 
                 time.sleep(interval_seconds)
@@ -225,14 +257,23 @@ class FarmCycleOrchestrator:
         self._runtime_thread.start()
 
     @staticmethod
-    def _execute_runtime_action(action_taken: str, input_bridge: Any, step_index: int = 0) -> None:
+    def _execute_runtime_action(
+        action_taken: str,
+        input_bridge: Any,
+        step_index: int = 0,
+        direction_bias: int = 0,
+    ) -> None:
         """Map runtime actions to conservative input taps.
 
         This intentionally avoids long key holds so accidental sustained input is minimized.
         """
 
         if action_taken == "navigate":
-            FarmCycleOrchestrator._execute_navigation_pattern(input_bridge=input_bridge, step_index=step_index)
+            FarmCycleOrchestrator._execute_navigation_pattern(
+                input_bridge=input_bridge,
+                step_index=step_index,
+                direction_bias=direction_bias,
+            )
             return
 
         action_key_map = {
@@ -246,18 +287,25 @@ class FarmCycleOrchestrator:
         FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key)
 
     @staticmethod
-    def _execute_navigation_pattern(input_bridge: Any, step_index: int) -> None:
+    def _execute_navigation_pattern(input_bridge: Any, step_index: int, direction_bias: int = 0) -> None:
         """Apply simple steering corrections so navigation is not straight-line only.
 
         Pattern repeats every 6 runtime steps with occasional A/D taps.
         """
 
+        if direction_bias < 0:
+            preferred_turn = "a"
+        elif direction_bias > 0:
+            preferred_turn = "d"
+        else:
+            preferred_turn = "a" if (max(0, int(step_index)) % 2 == 0) else "d"
+
         pattern: tuple[tuple[str, ...], ...] = (
             ("w",),
+            ("w", preferred_turn),
             ("w",),
-            ("w", "a"),
             ("w",),
-            ("w", "d"),
+            ("w", preferred_turn),
             ("w",),
         )
 
@@ -265,6 +313,54 @@ class FarmCycleOrchestrator:
         for key in keys:
             hold = 0.05 if key in {"a", "d"} else 0.08
             FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key, hold_seconds=hold)
+
+    def _compute_route_direction_bias(self, step_index: int) -> int:
+        """Estimate steering direction from persisted waypoint sequence.
+
+        Returns:
+        -1 for left bias, +1 for right bias, 0 for neutral.
+        """
+
+        if not self._runtime_waypoint_steering_enabled:
+            return 0
+        if len(self._runtime_waypoints) < 2:
+            return 0
+
+        segment = (max(0, int(step_index)) // 6) % len(self._runtime_waypoints)
+        p0 = self._runtime_waypoints[segment]
+        p1 = self._runtime_waypoints[(segment + 1) % len(self._runtime_waypoints)]
+        dx = int(p1.get("x", 0)) - int(p0.get("x", 0))
+
+        if dx <= -8:
+            return -1
+        if dx >= 8:
+            return 1
+        return 0
+
+    @staticmethod
+    def _load_route_waypoints(route_file: Path) -> list[dict[str, int]]:
+        """Load waypoint list from persisted route file, returning an empty list on failure."""
+
+        try:
+            payload = json.loads(route_file.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+
+        raw_waypoints = payload.get("waypoints")
+        if not isinstance(raw_waypoints, list):
+            return []
+
+        waypoints: list[dict[str, int]] = []
+        for wp in raw_waypoints:
+            if not isinstance(wp, dict):
+                continue
+            waypoints.append(
+                {
+                    "x": int(wp.get("x", 0)),
+                    "y": int(wp.get("y", 0)),
+                }
+            )
+        return waypoints
 
     @staticmethod
     def _tap_key(input_bridge: Any, key: str, hold_seconds: float = 0.08) -> None:

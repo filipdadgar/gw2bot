@@ -244,6 +244,29 @@ to harvest for that step and telemetry records prompt visibility state.
 
 ---
 
+### SC-017: Mount-Cycle Route-Biased Navigation ✅
+
+**Requirement**: During active runtime with mount cycle enabled, telemetry shows
+remount transitions after gather interactions and navigation emits non-zero
+direction bias events derived from persisted route waypoints.
+
+**Validation**:
+- Runtime loop now loads persisted route waypoints for steering context.
+- Navigation action execution supports direction bias (`-1`, `0`, `1`) and
+  emits `state_features.nav_direction_bias`.
+- Gather actions set remount-pending state and travel steps trigger remount
+  mount action (`x` key), recorded as `state_features.mount_action=remount`.
+- Runtime settings added:
+  - `GW2_RUNTIME_MOUNT_CYCLE_ENABLED`
+  - `GW2_RUNTIME_WAYPOINT_STEERING_ENABLED`
+- Unit tests validate behavior:
+  - `tests/unit/test_runtime_waypoint_steering.py`
+  - `tests/unit/test_runtime_action_execution.py`
+
+**Status**: ✅ PASS
+
+---
+
 ## Feature Completeness
 
 ### User Story 1: Discover and Run (P1) ✅
@@ -322,6 +345,20 @@ to harvest for that step and telemetry records prompt visibility state.
 
 ---
 
+### Mount-Cycle Navigation and Route Bias ✅
+
+| Component | Status | Tests |
+|-----------|--------|-------|
+| Waypoint Load for Runtime Steering | ✅ | `test_runtime_waypoint_steering.py` |
+| Route Direction Bias Computation | ✅ | `test_runtime_waypoint_steering.py` |
+| Navigate Action Direction Bias Input | ✅ | `test_runtime_action_execution.py` |
+| Remount Transition After Gather | ✅ | runtime telemetry/manual verification |
+| Dashboard Bias/Mount Visibility | ✅ | manual verification |
+
+**Verdict**: Runtime movement now combines forward travel with route-biased turning and remount transitions after gather interactions.
+
+---
+
 ## Deployment Readiness
 
 ### Docker Containerization ✅
@@ -374,7 +411,7 @@ to harvest for that step and telemetry records prompt visibility state.
 ## Release Checklist
 
 - [x] All mandatory user stories (US1, US2, US3, Web Dashboard) implemented
-- [x] All success criteria (SC-001 through SC-016) validated
+- [x] All success criteria (SC-001 through SC-017) validated
 - [x] Constitution alignment verified (CAR-001 through CAR-004)
 - [x] Full test suite passing (76/76 tests)
 - [x] Code linting clean (ruff check)

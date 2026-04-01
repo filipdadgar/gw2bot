@@ -181,6 +181,9 @@ recommendations for valid state input.
   from captured frames and deterministically prioritize harvest interaction
   actions when prompt visibility is high, so gather key execution is reliable at
   close range.
+- **FR-022**: System MUST support a mount/travel/gather/remount runtime control
+  flow with route-biased steering so navigation behavior follows discovered path
+  direction more closely than straight-line forward taps.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -259,6 +262,9 @@ recommendations for valid state input.
 - **SC-016**: During active runtime with healthy host bridge, when the gather
   prompt is visible in frame capture, action selection deterministically resolves
   to harvest for that step and telemetry records prompt visibility state.
+- **SC-017**: During active runtime with mount cycle enabled, telemetry shows
+  remount transitions after gather interactions and navigation emits non-zero
+  direction bias events derived from persisted route waypoints.
 
 ## Assumptions
 

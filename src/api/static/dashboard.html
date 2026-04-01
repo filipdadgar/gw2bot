@@ -650,12 +650,14 @@
             signals.signals.forEach(signal => {
                 const time = signal.generated_at_utc ? new Date(signal.generated_at_utc) : new Date();
                 const promptVisible = Number(signal.state_features?.gather_prompt_visible || 0) >= 0.5;
+                const navBias = Number(signal.state_features?.nav_direction_bias || 0);
+                const mountAction = signal.state_features?.mount_action || '-';
                 const item = document.createElement('div');
                 item.className = 'signal-item';
                 item.innerHTML = `
                     <div class="signal-time">${time.toLocaleTimeString()}</div>
                     <div class="signal-action">Action: ${signal.action_taken || 'none'}</div>
-                    <div>Reward: ${(signal.reward_proxy || 0).toFixed(2)} | Step: ${signal.step_index || 0} | Prompt: ${promptVisible ? 'yes' : 'no'}</div>
+                    <div>Reward: ${(signal.reward_proxy || 0).toFixed(2)} | Step: ${signal.step_index || 0} | Prompt: ${promptVisible ? 'yes' : 'no'} | Bias: ${navBias} | Mount: ${mountAction}</div>
                 `;
                 log.appendChild(item);
             });

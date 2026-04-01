@@ -32,7 +32,12 @@ def test_execute_runtime_action_navigate_taps_w_with_release() -> None:
 def test_execute_runtime_action_navigate_step_with_left_correction() -> None:
     bridge = _InputBridgeStub()
 
-    FarmCycleOrchestrator._execute_runtime_action(action_taken="navigate", input_bridge=bridge, step_index=2)
+    FarmCycleOrchestrator._execute_runtime_action(
+        action_taken="navigate",
+        input_bridge=bridge,
+        step_index=1,
+        direction_bias=-1,
+    )
 
     assert bridge.calls == [
         ("press", "w"),
@@ -45,13 +50,36 @@ def test_execute_runtime_action_navigate_step_with_left_correction() -> None:
 def test_execute_runtime_action_navigate_step_with_right_correction() -> None:
     bridge = _InputBridgeStub()
 
-    FarmCycleOrchestrator._execute_runtime_action(action_taken="navigate", input_bridge=bridge, step_index=4)
+    FarmCycleOrchestrator._execute_runtime_action(
+        action_taken="navigate",
+        input_bridge=bridge,
+        step_index=1,
+        direction_bias=1,
+    )
 
     assert bridge.calls == [
         ("press", "w"),
         ("release", "w"),
         ("press", "d"),
         ("release", "d"),
+    ]
+
+
+def test_execute_runtime_action_navigate_step_with_left_direction_bias() -> None:
+    bridge = _InputBridgeStub()
+
+    FarmCycleOrchestrator._execute_runtime_action(
+        action_taken="navigate",
+        input_bridge=bridge,
+        step_index=1,
+        direction_bias=-1,
+    )
+
+    assert bridge.calls == [
+        ("press", "w"),
+        ("release", "w"),
+        ("press", "a"),
+        ("release", "a"),
     ]
 
 

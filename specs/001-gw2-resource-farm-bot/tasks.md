@@ -196,6 +196,11 @@
 - [X] T089 Wire gather prompt state into runtime features and prioritize harvest action in src/core/orchestration/farm_cycle_orchestrator.py
 - [X] T090 [P] Add unit tests for gather prompt detector and deterministic action override in tests/unit/test_interaction_prompt_detector.py and tests/unit/test_runtime_policy_threshold.py
 - [X] T091 Update dashboard recent-actions display and spec artifacts to include prompt visibility signal behavior in src/api/static/dashboard.html and specs/001-gw2-resource-farm-bot/*
+- [X] T092 [P] Implement route waypoint loading and direction-bias steering helper in src/core/orchestration/farm_cycle_orchestrator.py
+- [X] T093 Implement mount/remount runtime control transitions tied to gather actions in src/core/orchestration/farm_cycle_orchestrator.py
+- [X] T094 [P] Add runtime settings and endpoint wiring for mount cycle and waypoint steering flags in src/config/settings.py, src/api/main.py, and src/api/routes/run.py
+- [X] T095 [P] Add unit tests for waypoint steering and updated navigation action patterns in tests/unit/test_runtime_waypoint_steering.py and tests/unit/test_runtime_action_execution.py
+- [X] T096 Update quickstart, dashboard docs, README, and validation/spec artifacts for mount-cycle navigation flow
 
 ---
 

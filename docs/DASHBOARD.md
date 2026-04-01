@@ -30,6 +30,8 @@ Open your browser and navigate to:
 - **Live Feed**: See actions as they execute (navigate, harvest, interact)
 - **Reward + Step**: Track proxy reward and step progression per signal
 - **Prompt Visibility**: Shows whether gather prompt was detected for that step (`Prompt: yes/no`)
+- **Navigation Bias**: Shows steering bias from route waypoint direction (`Bias: -1/0/1`)
+- **Mount Events**: Shows remount transitions after gather (`Mount: remount`)
 
 ### Settings
 - **Policy Confidence Threshold**: Adjust from 0.0 to 1.0
@@ -81,6 +83,8 @@ Plus new dashboard endpoints for telemetry streaming.
 ```bash
 GW2_RUNTIME_POLICY_ENABLED=true
 GW2_RUNTIME_INPUT_ENABLED=true
+GW2_RUNTIME_MOUNT_CYCLE_ENABLED=true
+GW2_RUNTIME_WAYPOINT_STEERING_ENABLED=true
 GW2_TRAINING_AUTO_RETRAIN_ENABLED=true
 GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7
 ```
