@@ -29,6 +29,32 @@ def test_execute_runtime_action_navigate_taps_w_with_release() -> None:
     assert bridge.calls[1] == ("release", "w")
 
 
+def test_execute_runtime_action_navigate_step_with_left_correction() -> None:
+    bridge = _InputBridgeStub()
+
+    FarmCycleOrchestrator._execute_runtime_action(action_taken="navigate", input_bridge=bridge, step_index=2)
+
+    assert bridge.calls == [
+        ("press", "w"),
+        ("release", "w"),
+        ("press", "a"),
+        ("release", "a"),
+    ]
+
+
+def test_execute_runtime_action_navigate_step_with_right_correction() -> None:
+    bridge = _InputBridgeStub()
+
+    FarmCycleOrchestrator._execute_runtime_action(action_taken="navigate", input_bridge=bridge, step_index=4)
+
+    assert bridge.calls == [
+        ("press", "w"),
+        ("release", "w"),
+        ("press", "d"),
+        ("release", "d"),
+    ]
+
+
 def test_execute_runtime_action_interact_taps_f_with_release() -> None:
     bridge = _InputBridgeStub()
 

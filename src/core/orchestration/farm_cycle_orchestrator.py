@@ -202,7 +202,11 @@ class FarmCycleOrchestrator:
                     )
 
                     if input_enabled and input_bridge is not None:
-                        self._execute_runtime_action(action_taken=action_taken, input_bridge=input_bridge)
+                        self._execute_runtime_action(
+                            action_taken=action_taken,
+                            input_bridge=input_bridge,
+                            step_index=self._snapshot.current_waypoint_index,
+                        )
 
                     reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
                     self.emit_runtime_policy_signal(
@@ -221,14 +225,17 @@ class FarmCycleOrchestrator:
         self._runtime_thread.start()
 
     @staticmethod
-    def _execute_runtime_action(action_taken: str, input_bridge: Any) -> None:
+    def _execute_runtime_action(action_taken: str, input_bridge: Any, step_index: int = 0) -> None:
         """Map runtime actions to conservative input taps.
 
         This intentionally avoids long key holds so accidental sustained input is minimized.
         """
 
+        if action_taken == "navigate":
+            FarmCycleOrchestrator._execute_navigation_pattern(input_bridge=input_bridge, step_index=step_index)
+            return
+
         action_key_map = {
-            "navigate": "w",
             "harvest": "f",
             "interact": "f",
         }
@@ -237,6 +244,27 @@ class FarmCycleOrchestrator:
             return
 
         FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key)
+
+    @staticmethod
+    def _execute_navigation_pattern(input_bridge: Any, step_index: int) -> None:
+        """Apply simple steering corrections so navigation is not straight-line only.
+
+        Pattern repeats every 6 runtime steps with occasional A/D taps.
+        """
+
+        pattern: tuple[tuple[str, ...], ...] = (
+            ("w",),
+            ("w",),
+            ("w", "a"),
+            ("w",),
+            ("w", "d"),
+            ("w",),
+        )
+
+        keys = pattern[max(0, int(step_index)) % len(pattern)]
+        for key in keys:
+            hold = 0.05 if key in {"a", "d"} else 0.08
+            FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key, hold_seconds=hold)
 
     @staticmethod
     def _tap_key(input_bridge: Any, key: str, hold_seconds: float = 0.08) -> None:
