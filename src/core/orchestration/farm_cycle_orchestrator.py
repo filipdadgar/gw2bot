@@ -42,11 +42,12 @@ class FarmCycleOrchestrator:
         self._signal_store = PolicySignalStore(storage)
         self._runtime_thread: threading.Thread | None = None
         self._runtime_stop_event = threading.Event()
-        self._runtime_waypoints: list[dict[str, int]] = []
+        self._runtime_waypoints: list[dict] = []
+        self._runtime_route_target: int = 0   # which waypoint we're steering toward
         self._runtime_remount_pending = False
         self._runtime_mount_cycle_enabled = True
         self._runtime_waypoint_steering_enabled = True
-        self._runtime_gather_lock_seconds = 1.6
+        self._runtime_gather_lock_seconds = 3.0
         self._runtime_gather_lock_until = 0.0
         self._runtime_gather_prompt_latch_seconds = 3.0
         self._runtime_prompt_latch_until = 0.0
@@ -169,6 +170,7 @@ class FarmCycleOrchestrator:
         gather_lock_seconds: float = 3.0,
         gather_prompt_latch_seconds: float = 3.0,
         manual_pause_seconds: float = 3.0,
+        mumble_reader: Any = None,
     ) -> None:
         """Start a background loop that emits policy signals while run is active."""
 
@@ -183,6 +185,7 @@ class FarmCycleOrchestrator:
         self._runtime_prompt_latch_until = 0.0
         self._manual_pause_seconds = max(0.0, float(manual_pause_seconds))
         self._manual_input_active_until = 0.0
+        self._runtime_route_target = 0
         self._runtime_stop_event.clear()
 
         def _worker() -> None:
@@ -208,6 +211,8 @@ class FarmCycleOrchestrator:
 
                 try:
                     state_features: dict[str, object]
+
+                    # --- Screen capture features ---
                     if capture_bridge is not None:
                         frame_capture = capture_bridge.capture()
                         frame = frame_capture.frame
@@ -239,13 +244,34 @@ class FarmCycleOrchestrator:
                             "gather_prompt_latched": 0.0,
                         }
 
-                    nav_direction_bias = self._compute_route_direction_bias(
-                        step_index=self._snapshot.current_waypoint_index
+                    # --- MumbleLink features (real position / mount state) ---
+                    mumble_data = mumble_reader.read() if mumble_reader is not None else None
+                    if mumble_data is not None and mumble_data.available:
+                        state_features["is_mounted"] = 1.0 if mumble_data.is_mounted else 0.0
+                        state_features["mount_index"] = float(mumble_data.mount_index)
+                        state_features["map_id"] = float(mumble_data.map_id)
+                        # Bucket position to 50-unit grid so nearby frames share the same key
+                        state_features["pos_x"] = float(round(mumble_data.avatar_x / 50.0) * 50)
+                        state_features["pos_z"] = float(round(mumble_data.avatar_z / 50.0) * 50)
+                        state_features["mumble_available"] = 1.0
+                    else:
+                        state_features["is_mounted"] = 0.0
+                        state_features["mount_index"] = 0.0
+                        state_features["map_id"] = 0.0
+                        state_features["pos_x"] = 0.0
+                        state_features["pos_z"] = 0.0
+                        state_features["mumble_available"] = 0.0
+
+                    # --- Navigation bias (uses MumbleLink when available) ---
+                    nav_direction_bias, waypoint_dist = self._compute_nav_bias(
+                        mumble_data=mumble_data,
+                        step_index=self._snapshot.current_waypoint_index,
                     )
                     now_monotonic = time.monotonic()
                     lock_active = self._is_gather_lock_active(now=now_monotonic)
                     manual_active = now_monotonic < self._manual_input_active_until
                     state_features["nav_direction_bias"] = float(nav_direction_bias)
+                    state_features["waypoint_dist"] = float(waypoint_dist)
                     state_features["remount_pending"] = 1.0 if self._runtime_remount_pending else 0.0
                     state_features["gather_lock_remaining_ms"] = self._gather_lock_remaining_ms(now=now_monotonic)
                     state_features["manual_input_active"] = 1.0 if manual_active else 0.0
@@ -369,28 +395,67 @@ class FarmCycleOrchestrator:
             hold = 0.10 if key in {"a", "d"} else 0.40
             FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key, hold_seconds=hold)
 
-    def _compute_route_direction_bias(self, step_index: int) -> int:
-        """Estimate steering direction from persisted waypoint sequence.
+    # Distance (world units) at which we consider a waypoint reached and
+    # advance to the next one.
+    _WAYPOINT_ARRIVE_DIST: float = 40.0
 
-        Returns:
-        -1 for left bias, +1 for right bias, 0 for neutral.
+    def _compute_nav_bias(self, mumble_data: Any, step_index: int) -> tuple[int, float]:
+        """Return (direction_bias, distance_to_target_waypoint).
+
+        direction_bias: -1 = turn left, 0 = straight, +1 = turn right.
+        distance: world-unit distance to the current target waypoint (0 when unknown).
+
+        When MumbleLink data is available, uses a 2-D cross-product of the
+        avatar's facing vector and the vector toward the target waypoint to
+        determine which way to steer.  Also auto-advances the route target
+        index when the avatar gets within _WAYPOINT_ARRIVE_DIST of a waypoint.
+
+        Falls back to the legacy pixel-delta heuristic when MumbleLink is
+        not available.
         """
+        if not self._runtime_waypoint_steering_enabled or len(self._runtime_waypoints) < 2:
+            return 0, 0.0
 
-        if not self._runtime_waypoint_steering_enabled:
-            return 0
-        if len(self._runtime_waypoints) < 2:
-            return 0
+        target_idx = self._runtime_route_target % len(self._runtime_waypoints)
 
+        # --- MumbleLink path ---
+        if mumble_data is not None and mumble_data.available:
+            wp = self._runtime_waypoints[target_idx]
+            wp_x = float(wp.get("x", 0.0))
+            wp_z = float(wp.get("y", 0.0))   # stored as "y" in route files
+
+            dx = wp_x - mumble_data.avatar_x
+            dz = wp_z - mumble_data.avatar_z
+            dist = (dx * dx + dz * dz) ** 0.5
+
+            # Advance waypoint when close enough
+            if dist < self._WAYPOINT_ARRIVE_DIST:
+                self._runtime_route_target = (target_idx + 1) % len(self._runtime_waypoints)
+                target_idx = self._runtime_route_target
+                wp = self._runtime_waypoints[target_idx]
+                dx = float(wp.get("x", 0.0)) - mumble_data.avatar_x
+                dz = float(wp.get("y", 0.0)) - mumble_data.avatar_z
+                dist = (dx * dx + dz * dz) ** 0.5
+
+            # 2-D cross product: front × waypoint_direction
+            # positive → waypoint is to the right; negative → to the left
+            cross = mumble_data.front_x * dz - mumble_data.front_z * dx
+            if cross > 0.15:
+                return 1, dist
+            if cross < -0.15:
+                return -1, dist
+            return 0, dist
+
+        # --- Legacy pixel-delta fallback ---
         segment = (max(0, int(step_index)) // 6) % len(self._runtime_waypoints)
         p0 = self._runtime_waypoints[segment]
         p1 = self._runtime_waypoints[(segment + 1) % len(self._runtime_waypoints)]
-        dx = int(p1.get("x", 0)) - int(p0.get("x", 0))
-
-        if dx <= -8:
-            return -1
-        if dx >= 8:
-            return 1
-        return 0
+        dx_px = int(p1.get("x", 0)) - int(p0.get("x", 0))
+        if dx_px <= -8:
+            return -1, 0.0
+        if dx_px >= 8:
+            return 1, 0.0
+        return 0, 0.0
 
     def notify_manual_input(self) -> None:
         """Called by ManualInputListener when the operator touches the keyboard/mouse.

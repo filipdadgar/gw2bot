@@ -58,6 +58,7 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
             policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
             interval_seconds=interval_seconds,
             manual_pause_seconds=float(settings.gw2_runtime_manual_pause_seconds),
+            mumble_reader=getattr(request.app.state, "mumble_reader", None),
         )
 
         if bridge_enabled and capture_bridge is not None:

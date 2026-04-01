@@ -13,6 +13,8 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.adapters.bridge_factory import get_bridges
+from src.adapters.mumble_link_reader import MumbleLinkReader
+from src.core.navigation.route_recorder import RouteRecorder
 from src.api.routes.dashboard import router as dashboard_router
 from src.api.routes.discovery import router as discovery_router
 from src.api.routes.run import router as run_router
@@ -82,6 +84,7 @@ def _startup_autostart_run(app: FastAPI) -> None:
         policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
         interval_seconds=interval_seconds,
         manual_pause_seconds=float(settings.gw2_runtime_manual_pause_seconds),
+        mumble_reader=app.state.mumble_reader,
     )
 
     if capture_bridge is None:
@@ -134,9 +137,35 @@ def create_app() -> FastAPI:
         capture_bridge=capture_bridge,
         bridge_enabled=bridge_enabled,
     )
+    # MumbleLink reader — real player position and mount state from GW2
+    mumble_reader: MumbleLinkReader | None = None
+    if bool(settings.gw2_mumble_link_enabled):
+        try:
+            mumble_reader = MumbleLinkReader()
+            if mumble_reader.available:
+                logger.info("MumbleLink connected — real position tracking enabled")
+            else:
+                logger.info("MumbleLink opened but GW2 not yet in a map (tick=0)")
+        except Exception as exc:
+            logger.warning("MumbleLink init failed: %s", exc)
+            mumble_reader = None
+
+    # Route recorder — builds real routes from manual harvest positions
+    route_recorder = RouteRecorder(storage)
+
+    def _on_harvest_callback() -> None:
+        """Record current player position as a route waypoint when F is pressed."""
+        if not route_recorder.recording:
+            return
+        if mumble_reader is None:
+            return
+        data = mumble_reader.read()
+        route_recorder.record_position(data)
+
     manual_input_listener = ManualInputListener(
         demo_recorder,
         on_manual_input=farm_cycle_orchestrator.notify_manual_input,
+        on_harvest=_on_harvest_callback,
     )
 
     if settings.gw2_training_auto_retrain_enabled:
@@ -159,6 +188,8 @@ def create_app() -> FastAPI:
     app.state.capture_bridge = capture_bridge
     app.state.input_bridge = input_bridge
     app.state.bridge_enabled = bridge_enabled
+    app.state.mumble_reader = mumble_reader
+    app.state.route_recorder = route_recorder
 
     app.include_router(dashboard_router)
     app.include_router(discovery_router)

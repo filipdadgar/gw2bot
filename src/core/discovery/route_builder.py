@@ -23,14 +23,15 @@ class RouteBuilder:
         raw = (sampled_segments * 0.06) + (encountered_nodes * 0.12)
         return max(0.0, min(1.0, raw))
 
-    def persist_route(self, waypoints: list[dict[str, int]], cooldown_seconds: int = 30) -> str:
+    def persist_route(self, waypoints: list[dict], cooldown_seconds: int = 30, map_id: int = 0) -> str:
         """Persist a discovered route and return its identifier."""
 
         route_id = f"route-{uuid4().hex[:8]}"
         payload = {
             "route_id": route_id,
-            "name": "discovered-route",
-            "source": "discovered",
+            "name": "recorded-route" if map_id else "discovered-route",
+            "source": "recorded" if map_id else "discovered",
+            "map_id": map_id,
             "cooldown_seconds": cooldown_seconds,
             "waypoints": waypoints,
             "created_at_utc": datetime.now(UTC).isoformat(),

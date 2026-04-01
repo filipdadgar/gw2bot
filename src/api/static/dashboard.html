@@ -514,6 +514,58 @@
                 </div>
             </div>
 
+            <!-- Player Position Card -->
+            <div class="card">
+                <h2>Player Position</h2>
+                <div class="stat-row">
+                    <span class="stat-label">MumbleLink:</span>
+                    <span id="mumbleStatus" class="status-badge status-stopped">Offline</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Mount:</span>
+                    <span class="stat-value" id="mountName">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Map ID:</span>
+                    <span class="stat-value" id="mapId">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">World X / Z:</span>
+                    <span class="stat-value" id="worldPos">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Continent X / Y:</span>
+                    <span class="stat-value" id="continentPos">—</span>
+                </div>
+            </div>
+
+            <!-- Route Recording Card -->
+            <div class="card">
+                <h2>Route Recording</h2>
+                <div class="alert alert-info" style="margin-bottom:10px;font-size:0.9em;">
+                    Press <strong>Start Recording</strong>, fly your farming route and press
+                    <strong>F</strong> on each node. Each harvest records a waypoint.
+                    Press <strong>Save Route</strong> when done.
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Status:</span>
+                    <span id="recordingStatus" class="status-badge status-stopped">Idle</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Waypoints:</span>
+                    <span class="stat-value" id="waypointCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Saved Routes:</span>
+                    <span class="stat-value" id="routeCount">—</span>
+                </div>
+                <div class="button-group">
+                    <button class="btn-success" id="recordStartBtn" onclick="startRecording()">⏺ Start</button>
+                    <button class="btn-primary" id="recordSaveBtn" onclick="saveRecording()" disabled>💾 Save Route</button>
+                    <button class="btn-danger" id="recordDiscardBtn" onclick="discardRecording()" disabled>🗑 Discard</button>
+                </div>
+            </div>
+
             <!-- Action Execution Log -->
             <div class="card wide-card">
                 <h2>Recent Actions</h2>
@@ -716,12 +768,85 @@
             }
         }
 
+        async function updatePosition() {
+            const pos = await fetchAPI('/v1/discovery/position');
+            if (!pos) return;
+
+            const mumbleEl = document.getElementById('mumbleStatus');
+            if (!pos.available) {
+                mumbleEl.textContent = 'Offline';
+                mumbleEl.className = 'status-badge status-stopped';
+                document.getElementById('mountName').textContent = '—';
+                document.getElementById('mapId').textContent = '—';
+                document.getElementById('worldPos').textContent = '—';
+                document.getElementById('continentPos').textContent = '—';
+                return;
+            }
+
+            mumbleEl.textContent = 'Connected';
+            mumbleEl.className = 'status-badge status-running';
+            const mount = pos.mount_name && pos.mount_name !== 'none'
+                ? `🐾 ${pos.mount_name}` : '🚶 On foot';
+            document.getElementById('mountName').textContent = mount;
+            document.getElementById('mapId').textContent = pos.map_id || '—';
+            document.getElementById('worldPos').textContent =
+                `${pos.avatar_x?.toFixed(1)}, ${pos.avatar_z?.toFixed(1)}`;
+            document.getElementById('continentPos').textContent =
+                `${pos.continent_x?.toFixed(1)}, ${pos.continent_y?.toFixed(1)}`;
+        }
+
+        async function updateRecordingStatus() {
+            const rec = await fetchAPI('/v1/discovery/record/status');
+            if (!rec) return;
+
+            const statusEl = document.getElementById('recordingStatus');
+            statusEl.textContent = rec.recording ? 'RECORDING' : 'Idle';
+            statusEl.className = `status-badge ${rec.recording ? 'status-paused pulse' : 'status-stopped'}`;
+            document.getElementById('waypointCount').textContent = rec.waypoint_count ?? 0;
+
+            document.getElementById('recordStartBtn').disabled = rec.recording;
+            document.getElementById('recordSaveBtn').disabled = !rec.recording;
+            document.getElementById('recordDiscardBtn').disabled = !rec.recording;
+
+            // Refresh route list count
+            const routes = await fetchAPI('/v1/discovery/routes');
+            if (routes) {
+                document.getElementById('routeCount').textContent = routes.routes?.length ?? 0;
+            }
+        }
+
+        async function startRecording() {
+            const result = await fetchAPI('/v1/discovery/record/start', 'POST');
+            if (result?.ok) {
+                showAlert('Recording started — fly to nodes and press F on each one', 'success');
+                await updateRecordingStatus();
+            }
+        }
+
+        async function saveRecording() {
+            const result = await fetchAPI('/v1/discovery/record/stop', 'POST');
+            if (result?.ok) {
+                showAlert(`Route saved: ${result.route_id}`, 'success');
+            } else {
+                showAlert(`Could not save: ${result?.error || 'unknown'}`, 'error');
+            }
+            await updateRecordingStatus();
+        }
+
+        async function discardRecording() {
+            await fetchAPI('/v1/discovery/record/discard', 'POST');
+            showAlert('Recording discarded', 'info');
+            await updateRecordingStatus();
+        }
+
         async function refreshAll() {
             await Promise.all([
                 updateStatus(),
                 updateModelStatus(),
                 updateActionLog(),
                 updateHealthStatus(),
+                updatePosition(),
+                updateRecordingStatus(),
             ]);
         }
 

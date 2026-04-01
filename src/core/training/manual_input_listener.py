@@ -17,12 +17,18 @@ logger = logging.getLogger(__name__)
 class ManualInputListener:
     """Listens to local keyboard/mouse input and records demo actions."""
 
-    def __init__(self, demonstration_recorder: Any, on_manual_input: Any = None) -> None:
+    def __init__(
+        self,
+        demonstration_recorder: Any,
+        on_manual_input: Any = None,
+        on_harvest: Any = None,
+    ) -> None:
         self._recorder = demonstration_recorder
-        # Optional zero-argument callback invoked on every detected manual key/click.
-        # Used to notify the orchestrator so it suppresses bot input while the
-        # operator is in control.
+        # Called on every key/click — notifies orchestrator to suppress bot input.
         self._on_manual_input = on_manual_input
+        # Called specifically when the player presses F (harvest key) — used by
+        # RouteRecorder to snapshot the current MumbleLink position as a waypoint.
+        self._on_harvest = on_harvest
         self._keyboard_listener = None
         self._mouse_listener = None
         self._running = False
@@ -80,6 +86,11 @@ class ManualInputListener:
         action = self._map_key_to_action(key)
         if action is None:
             return
+        if action == "harvest" and callable(self._on_harvest):
+            try:
+                self._on_harvest()
+            except Exception:
+                logger.exception("on_harvest_callback_failed")
         self._record_action(action=action)
 
     def _on_click(self, x: int, y: int, button: Any, pressed: bool) -> None:

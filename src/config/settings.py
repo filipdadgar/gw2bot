@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     gw2_runtime_signal_interval_ms: int = Field(default=1000, alias="GW2_RUNTIME_SIGNAL_INTERVAL_MS")
     gw2_demo_auto_capture_enabled: bool = Field(default=False, alias="GW2_DEMO_AUTO_CAPTURE_ENABLED")
     gw2_autostart_run_enabled: bool = Field(default=False, alias="GW2_AUTOSTART_RUN_ENABLED")
+    gw2_mumble_link_enabled: bool = Field(default=True, alias="GW2_MUMBLE_LINK_ENABLED")
 
 
 @lru_cache(maxsize=1)
