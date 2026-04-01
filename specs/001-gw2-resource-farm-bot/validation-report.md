@@ -183,6 +183,23 @@ Real deployment: 2-hour manual soak validated
 
 ---
 
+### SC-014: Runtime Input Execution ✅
+
+**Requirement**: When runtime input execution is enabled and host bridge is healthy,
+the bot emits non-noop in-game input actions during active cycles and records
+corresponding runtime policy signals.
+
+**Validation**:
+- Runtime input execution flag wired via `GW2_RUNTIME_INPUT_ENABLED`
+- Runtime loop maps selected actions to bounded input taps (`navigate` -> `w`, `harvest/interact` -> `f`)
+- Unit tests cover action mapping and bridge compatibility:
+  - `tests/unit/test_runtime_action_execution.py`
+  - `tests/unit/test_runtime_policy_threshold.py`
+
+**Status**: ✅ PASS
+
+---
+
 ## Feature Completeness
 
 ### User Story 1: Discover and Run (P1) ✅

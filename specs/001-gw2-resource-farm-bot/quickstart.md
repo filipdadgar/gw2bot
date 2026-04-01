@@ -105,7 +105,8 @@ curl http://127.0.0.1:8000/v1/run/status
 Mission defaults in `.env` already enable:
 1. Run autostart
 2. Runtime policy actions
-3. Continuous in-app retraining
+3. Runtime input execution through host bridge
+4. Continuous in-app retraining
 
 Step-by-step:
 
@@ -134,6 +135,15 @@ curl http://127.0.0.1:8000/v1/training/policy/versions
 ```bash
 docker-compose logs -f
 ```
+
+6. Validate in-game action execution is active by checking runtime policy signals:
+
+```bash
+tail -n 5 data/telemetry/policy-signals.jsonl
+```
+
+Expected: `state_features.bridge_enabled=1.0` and non-zero frame dimensions while the
+active cycle progresses.
 
 5. Operator control calls (if needed):
 

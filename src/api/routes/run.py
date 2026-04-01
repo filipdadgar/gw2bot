@@ -39,6 +39,7 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
 
     if snapshot.status == "running" and snapshot.cycle_id is not None:
         capture_bridge = getattr(request.app.state, "capture_bridge", None)
+        input_bridge = getattr(request.app.state, "input_bridge", None)
         bridge_enabled = bool(getattr(request.app.state, "bridge_enabled", False))
         policy_registry = request.app.state.policy_registry
         settings = request.app.state.settings
@@ -46,8 +47,10 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
 
         orchestrator.start_runtime_loop(
             capture_bridge=capture_bridge if bridge_enabled else None,
+            input_bridge=input_bridge if bridge_enabled else None,
             policy_registry=policy_registry,
             policy_enabled=bool(settings.gw2_runtime_policy_enabled),
+            input_enabled=bool(settings.gw2_runtime_input_enabled),
             policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
             interval_seconds=interval_seconds,
         )

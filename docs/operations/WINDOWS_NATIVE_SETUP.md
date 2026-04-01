@@ -94,6 +94,7 @@ This creates a `.env` file with mission-mode defaults already enabled:
 - **Auto-start runs**: `GW2_AUTOSTART_RUN_ENABLED=true` ✅
 - **Auto-retrain**: `GW2_TRAINING_AUTO_RETRAIN_ENABLED=true` ✅
 - **Runtime policy**: `GW2_RUNTIME_POLICY_ENABLED=true` ✅
+- **Runtime input execution**: `GW2_RUNTIME_INPUT_ENABLED=true` ✅
 - **Native data path**: `GW2_DATA_DIR=data` ✅
 
 You can edit `.env` in Notepad if you need to adjust values, but defaults are production-ready.
@@ -191,6 +192,7 @@ With default `.env` settings, the bot operates in **mission mode**:
 ✅ **Autostart**: Bot automatically starts a run on launch  
 ✅ **Continuous Learning**: Collects policy signals from every action  
 ✅ **Automatic Retraining**: Retrains the policy model on schedule  
+✅ **Runtime Input Execution**: Sends bounded in-game key taps for selected actions  
 ✅ **Policy-Guided Actions**: Applies learned behaviors at runtime  
 
 You don't need to make API calls—the bot learns and improves automatically.
@@ -254,6 +256,13 @@ If you see "Capture unavailable", the Windows host bridge may not have screen ac
 - GW2 window is fully visible (not minimized)
 - No screensaver is active
 - No other full-screen application is covering the window
+
+### Validate In-Game Input Execution
+Run this command and ensure `bridge_enabled` is `1.0` with non-zero frame sizes:
+
+```powershell
+Get-Content .\data\telemetry\policy-signals.jsonl -Tail 10
+```
 
 ---
 

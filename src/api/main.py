@@ -64,10 +64,13 @@ def _startup_autostart_run(app: FastAPI) -> None:
     settings = app.state.settings
     interval_seconds = max(0.05, float(settings.gw2_runtime_signal_interval_ms) / 1000.0)
     capture_bridge = app.state.capture_bridge if bool(app.state.bridge_enabled) else None
+    input_bridge = app.state.input_bridge if bool(app.state.bridge_enabled) else None
     orchestrator.start_runtime_loop(
         capture_bridge=capture_bridge,
+        input_bridge=input_bridge,
         policy_registry=app.state.policy_registry,
         policy_enabled=bool(settings.gw2_runtime_policy_enabled),
+        input_enabled=bool(settings.gw2_runtime_input_enabled),
         policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
         interval_seconds=interval_seconds,
     )

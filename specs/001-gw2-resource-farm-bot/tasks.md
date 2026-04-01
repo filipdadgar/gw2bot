@@ -168,6 +168,11 @@
 - [X] T075 [US4] Add manual demonstration capture APIs and persistence wiring
 - [X] T076 [US4] Add contract tests for demonstration recording workflow
 - [X] T077 [US4] Add mission-mode autostart defaults for continuous training and finetuning on Docker hosts
+- [X] T078 [US4] Wire runtime action execution from policy-selected actions to host input bridge in src/core/orchestration/farm_cycle_orchestrator.py
+- [X] T079 [US4] Add runtime input execution configuration and endpoint wiring in src/config/settings.py, src/api/main.py, and src/api/routes/run.py
+- [X] T080 [US4] Add unit tests for runtime action execution behavior in tests/unit/test_runtime_action_execution.py
+- [X] T081 [US4] Update Windows native setup and operator docs for runtime input validation flow in docs/operations/WINDOWS_NATIVE_SETUP.md and docs/operations/gw2bot-runbook.md
+- [X] T082 [US4] Update spec quickstart and validation artifacts for runtime input execution readiness
 
 ---
 

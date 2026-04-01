@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
+import logging
 from pathlib import Path
 import threading
 import time
@@ -14,6 +15,8 @@ from src.core.orchestration.policy_signal_emitter import PolicySignalEmitter
 from src.core.persistence.policy_signal_store import PolicySignalStore
 from src.core.orchestration.state_types import RunState
 from src.core.persistence.storage import Storage
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -129,8 +132,10 @@ class FarmCycleOrchestrator:
     def start_runtime_loop(
         self,
         capture_bridge: Any,
+        input_bridge: Any,
         policy_registry: Any,
         policy_enabled: bool,
+        input_enabled: bool,
         policy_min_confidence: float,
         interval_seconds: float,
     ) -> None:
@@ -192,6 +197,9 @@ class FarmCycleOrchestrator:
                         policy_min_confidence=policy_min_confidence,
                     )
 
+                    if input_enabled and input_bridge is not None:
+                        self._execute_runtime_action(action_taken=action_taken, input_bridge=input_bridge)
+
                     reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
                     self.emit_runtime_policy_signal(
                         state_features=state_features,
@@ -207,6 +215,34 @@ class FarmCycleOrchestrator:
 
         self._runtime_thread = threading.Thread(target=_worker, name="gw2bot-runtime-loop", daemon=True)
         self._runtime_thread.start()
+
+    @staticmethod
+    def _execute_runtime_action(action_taken: str, input_bridge: Any) -> None:
+        """Map runtime actions to conservative input taps.
+
+        This intentionally avoids long key holds so accidental sustained input is minimized.
+        """
+
+        action_key_map = {
+            "navigate": "w",
+            "harvest": "f",
+            "interact": "f",
+        }
+        key = action_key_map.get(action_taken)
+        if key is None:
+            return
+
+        FarmCycleOrchestrator._tap_key(input_bridge=input_bridge, key=key)
+
+    @staticmethod
+    def _tap_key(input_bridge: Any, key: str, hold_seconds: float = 0.08) -> None:
+        """Send a short key tap and release when supported by the bridge."""
+
+        input_bridge.press(key)
+        release = getattr(input_bridge, "release", None)
+        if callable(release):
+            time.sleep(max(0.01, hold_seconds))
+            release(key)
 
     @staticmethod
     def _select_action(

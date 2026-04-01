@@ -118,7 +118,7 @@ curl http://127.0.0.1:8000/v1/run/status
 
 #### Scenario 3: Auto Play by Bot (Mission Mode)
 
-Mission defaults enable run autostart, runtime policy, and in-app auto-retraining.
+Mission defaults enable run autostart, runtime policy, runtime input execution, and in-app auto-retraining.
 
 1. Start stack:
 
@@ -146,7 +146,15 @@ curl http://127.0.0.1:8000/v1/training/policy/versions
 docker-compose logs -f
 ```
 
-5. Manual operator controls (if needed):
+5. Verify runtime signals show active host bridge data:
+
+```bash
+tail -n 10 data/telemetry/policy-signals.jsonl
+```
+
+Expected: `state_features.bridge_enabled=1.0` with non-zero frame dimensions.
+
+6. Manual operator controls (if needed):
 
 ```bash
 curl -X POST http://127.0.0.1:8000/v1/run/pause

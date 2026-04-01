@@ -169,6 +169,9 @@ recommendations for valid state input.
   platforms (including Windows) where, after container startup with mission
   defaults, the bot auto-starts a run and performs continuous policy retraining
   and runtime policy application without manual training API calls.
+- **FR-019**: System MUST support runtime action execution through the configured
+  host input bridge when enabled, mapping policy-selected actions to bounded
+  keyboard or mouse inputs suitable for in-game automation.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -237,6 +240,9 @@ recommendations for valid state input.
 - **SC-013**: In mission mode on a Windows host, starting Docker Compose with a
   running game client begins autonomous signal collection and periodic policy
   retraining within 5 minutes with no manual training endpoint invocation.
+- **SC-014**: When runtime input execution is enabled and host bridge is
+  healthy, the bot emits non-noop in-game input actions during active cycles
+  and records corresponding runtime policy signals for those steps.
 
 ## Assumptions
 
