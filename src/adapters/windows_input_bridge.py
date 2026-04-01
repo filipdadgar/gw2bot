@@ -16,6 +16,7 @@ Example:
 
 import logging
 import time
+from typing import Optional
 from pynput.keyboard import Controller as KeyboardController, Key
 from pynput.mouse import Controller as MouseController, Button
 from src.adapters.bridge_interfaces import InputBridge
@@ -33,9 +34,15 @@ class WindowsInputBridge(InputBridge):
         mouse: pynput MouseController instance
     """
 
-    def __init__(self):
-        """Initialize keyboard and mouse controllers."""
+    def __init__(self, window_title: Optional[str] = None):
+        """Initialize keyboard and mouse controllers.
+
+        Args:
+            window_title: Optional target window title for interface compatibility.
+                Currently unused on Windows input bridge.
+        """
         try:
+            self.window_title = window_title
             self.keyboard = KeyboardController()
             self.mouse = MouseController()
             logger.debug("WindowsInputBridge initialized")
