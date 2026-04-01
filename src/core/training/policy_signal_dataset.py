@@ -17,19 +17,36 @@ class PolicySignalSample:
     reward_proxy: float
 
 
-def _normalize_feature_value(value: Any) -> Any:
-    if isinstance(value, dict):
-        return {k: _normalize_feature_value(value[k]) for k in sorted(value)}
-    if isinstance(value, list):
-        return [_normalize_feature_value(item) for item in value]
-    return value
+# Features excluded from the state key — they are metadata or change every frame
+# and would make every state unique, preventing the policy from ever matching.
+_STATE_KEY_EXCLUDE: frozenset[str] = frozenset({
+    "bridge_enabled",
+    "frame_width",
+    "frame_height",
+    "gather_lock_remaining_ms",  # changes every ms
+    "source",
+    "input_suppressed_reason",
+    "mount_action",
+})
 
 
 def normalize_state_key(state_features: dict[str, Any]) -> str:
-    """Build a deterministic hashable state key from arbitrary feature payload."""
+    """Build a deterministic hashable state key from decision-relevant features.
 
-    normalized = _normalize_feature_value(state_features)
-    return json.dumps(normalized, sort_keys=True, separators=(",", ":"))
+    Continuous floats (brightness, contrast) are bucketed to one decimal place so
+    states seen in different frames can actually match each other in the lookup table.
+    Metadata fields that change every iteration (frame size, lock timers) are excluded.
+    """
+    filtered: dict[str, Any] = {}
+    for k, v in state_features.items():
+        if k in _STATE_KEY_EXCLUDE:
+            continue
+        # Bucket floats to 1 decimal place — without this, brightness=0.3412 and
+        # brightness=0.3413 are treated as completely different states and never match.
+        if isinstance(v, float):
+            v = round(v, 1)
+        filtered[k] = v
+    return json.dumps(filtered, sort_keys=True, separators=(",", ":"))
 
 
 class PolicySignalDataset:

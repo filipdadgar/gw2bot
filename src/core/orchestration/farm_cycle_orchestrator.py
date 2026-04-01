@@ -73,8 +73,18 @@ class FarmCycleOrchestrator:
 
         resolved_route_id = route_id
         if resolved_route_id is None and auto_discover_if_missing:
-            discovery = self._discovery.start()
-            resolved_route_id = discovery.get("generated_route_id")  # type: ignore[assignment]
+            # Reuse the most recently created route if one already exists rather than
+            # generating a new identical placeholder every startup.
+            existing = sorted(
+                Path(self._storage.routes_dir).glob("route-*.json"),
+                key=lambda p: p.stat().st_mtime,
+                reverse=True,
+            )
+            if existing:
+                resolved_route_id = existing[0].stem
+            else:
+                discovery = self._discovery.start()
+                resolved_route_id = discovery.get("generated_route_id")  # type: ignore[assignment]
 
         if resolved_route_id is None:
             self._snapshot = RunSnapshot(
@@ -276,7 +286,13 @@ class FarmCycleOrchestrator:
                                 self._runtime_remount_pending = True
                                 self._set_gather_lock(now=now_monotonic)
 
-                    reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
+                    # Assign meaningful rewards so the policy table learns the right hierarchy.
+                    # harvest/interact = high reward (goal behaviour), navigate = low reward (filler).
+                    # Manual demo data uses the same scale (harvest=1.0, interact=0.8, navigate=0.3).
+                    if action_taken in {"harvest", "interact"}:
+                        reward_proxy = 1.0 if action_taken == "harvest" else 0.8
+                    else:
+                        reward_proxy = 0.2
                     self.emit_runtime_policy_signal(
                         state_features=state_features,
                         action_taken=action_taken,

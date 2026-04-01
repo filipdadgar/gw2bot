@@ -65,7 +65,13 @@ class DemonstrationRecorder:
     ) -> dict[str, object]:
         with self._lock:
             if self._session is None or not self._session.active:
-                raise RuntimeError("demo_session_not_active")
+                # Auto-start a persistent session so manual keypresses are always
+                # captured without requiring an explicit API call to start recording.
+                self._session = DemoSession(
+                    session_id=f"demo-{uuid4().hex[:8]}",
+                    step_index=0,
+                    active=True,
+                )
 
             session = self._session
             features = state_features or self._capture_state_features()
