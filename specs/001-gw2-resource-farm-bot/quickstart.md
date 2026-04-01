@@ -2,13 +2,26 @@
 
 **Latest**: Discovery-first MVP with auto route discovery, pause/resume control, and telemetry.
 
+## Control Interfaces
+
+The bot provides **two control interfaces**:
+
+| Interface | Description | Use Case |
+|-----------|-------------|----------|
+| **Web Dashboard** | Browser-based UI at `http://localhost:8000` | Recommended for Windows users; doesn't steal focus from game |
+| **Terminal/API** | REST API via `curl` commands | Headless/scripted control; programmatic integration |
+
+Both interfaces work simultaneously and provide the same capabilities (start/pause/resume/stop, model info, real-time status).
+
+---
+
 ## 1. Prerequisites
 
 - Docker and Docker Compose
 - Guild Wars 2 client running locally (not in container)
 - Host bridge setup for frame capture and input automation
 
-## 2. Build and Start
+## 2. Build and Start (Common to Both Interfaces)
 
 ```bash
 # Build image
@@ -32,6 +45,34 @@ Response (idle state):
   "last_error": null
 }
 ```
+
+## 3. Using the Web Dashboard (Recommended for Windows)
+
+Open your browser and navigate to:
+
+```
+http://localhost:8000
+```
+
+Or from another machine:
+
+```
+http://<your-machine-ip>:8000
+```
+
+The dashboard displays:
+- ✅ Real-time run status (running/paused/stopped)
+- ✅ Start/Pause/Resume/Stop buttons
+- ✅ Policy model info (latest ID, samples, training time)
+- ✅ Bridge health status and frame resolution
+- ✅ Recent actions log with timestamps
+- ✅ Settings display
+
+For more details, see [DASHBOARD.md](../../docs/DASHBOARD.md).
+
+## 4. Using Terminal/API Commands (Alternative)
+
+---
 
 ## 2A. Scenario Playbooks (Step-by-Step)
 

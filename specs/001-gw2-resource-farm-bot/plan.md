@@ -97,6 +97,27 @@ policy modules under `src/core/orchestration` and `src/adapters`. Docker
 artifacts (`Dockerfile`, `docker-compose.yml`) will define isolated runtime and
 host access bindings for capture/input channels.
 
+## Control Interfaces
+
+The system provides **two complementary control interfaces** built on the same FastAPI backend:
+
+1. **Web Dashboard (UI)**
+   - Browser-based interface at `http://localhost:8000` or network accessible
+   - Real-time status display updating every 2 seconds
+   - Supports run lifecycle (start/pause/resume/stop)
+   - Shows policy model info, bridge health, recent actions
+   - **Advantage**: No focus stealing from game window; intuitive UI; network access
+   - **Use case**: Recommended for Windows operators managing the bot during gameplay
+
+2. **REST API (Terminal/Programmatic)**
+   - JSON REST endpoints for all operations
+   - `curl` command examples provided in quickstart
+   - OpenAPI schema available for integration
+   - **Advantage**: Scriptable, headless operation, system integration
+   - **Use case**: Headless servers, automated testing, programmatic automation
+
+Both interfaces operate simultaneously on the same backend and share all state/status/control semantics.
+
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**

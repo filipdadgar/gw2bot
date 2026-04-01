@@ -172,6 +172,11 @@ recommendations for valid state input.
 - **FR-019**: System MUST support runtime action execution through the configured
   host input bridge when enabled, mapping policy-selected actions to bounded
   keyboard or mouse inputs suitable for in-game automation.
+- **FR-020**: System MUST provide a web-based dashboard UI for bot control and
+  monitoring that operates without stealing focus from the game client,
+  supporting run lifecycle control (start/pause/resume/stop), real-time status
+  updates, policy model information, bridge health monitoring, and recent action
+  logs accessible via HTTP browser interface on the same machine or network.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -243,6 +248,10 @@ recommendations for valid state input.
 - **SC-014**: When runtime input execution is enabled and host bridge is
   healthy, the bot emits non-noop in-game input actions during active cycles
   and records corresponding runtime policy signals for those steps.
+- **SC-015**: Web dashboard is accessible on localhost and network via HTTP,
+  displays real-time run status and recent actions updating every 2 seconds,
+  supports run lifecycle control with immediate visual feedback, and does not
+  cause game window focus loss when operated.
 
 ## Assumptions
 

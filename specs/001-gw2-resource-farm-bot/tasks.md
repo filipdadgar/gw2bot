@@ -176,6 +176,25 @@
 
 ---
 
+## Phase 6: Polish (Web Dashboard Interface)
+
+**Goal**: Provide web-based dashboard for bot control without focus stealing from game client
+
+**Independent Test**: Dashboard accessible via HTTP, displays real-time status, supports run controls, updates without focus loss
+
+### Tests for Web Dashboard
+
+- [X] T083 [P] Add contract tests for dashboard telemetry endpoints in tests/contract/test_dashboard_api.py
+
+### Implementation for Web Dashboard
+
+- [X] T084 [P] Implement dashboard HTML/CSS/JS UI with real-time updates in src/api/static/dashboard.html
+- [X] T085 [P] Implement dashboard telemetry API endpoint in src/api/routes/dashboard.py
+- [X] T086 Wire dashboard routes into API factory and serve at / and /dashboard endpoints in src/api/main.py
+- [X] T087 Add dashboard documentation and update quickstart with web UI option in docs/DASHBOARD.md and specs/001-gw2-resource-farm-bot/quickstart.md
+
+---
+
 ## Dependencies and Execution Order
 
 ### Phase Dependencies

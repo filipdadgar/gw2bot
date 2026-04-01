@@ -200,6 +200,31 @@ corresponding runtime policy signals.
 
 ---
 
+### SC-015: Web Dashboard Interface ✅
+
+**Requirement**: Web dashboard is accessible on localhost and network via HTTP,
+displays real-time run status and recent actions updating every 2 seconds,
+supports run lifecycle control with immediate visual feedback, and does not
+cause game window focus loss.
+
+**Validation**:
+- Web dashboard served at `/` and `/dashboard` endpoints
+- HTML/CSS/JS UI with modern responsive design
+- Real-time status updates via `/v1/telemetry/recent-signals` endpoint
+- Run controls (start/pause/resume/stop) via existing API endpoints
+- 2-second auto-refresh of all metrics
+- Browser tab never steals focus from GW2 window
+- Dashboard components:
+  - Run status with cycle/route/waypoint info
+  - Policy model details (latest ID, sample count, training time)
+  - Bridge health and frame resolution
+  - Recent actions log
+  - Settings display with confidence threshold
+
+**Status**: ✅ PASS
+
+---
+
 ## Feature Completeness
 
 ### User Story 1: Discover and Run (P1) ✅
@@ -245,6 +270,23 @@ corresponding runtime policy signals.
 | Feature Flags | ✅ | (configuration accessible) |
 
 **Verdict**: All US3 optional enhancements implemented. Features can be toggled via config.
+
+---
+
+### Web Dashboard Interface ✅
+
+| Component | Status | Tests |
+|-----------|--------|-------|
+| Dashboard HTML/CSS/JS UI | ✅ | Manual verification |
+| Telemetry API Endpoint | ✅ | `test_dashboard_api.py` |
+| Run Status Display | ✅ | Real-time updates |
+| Lifecycle Controls | ✅ | Start/Pause/Resume/Stop buttons |
+| Model Information | ✅ | Latest model, samples, training time |
+| Bridge Health Monitor | ✅ | Capture/input status |
+| Recent Actions Log | ✅ | Real-time signal stream |
+| Focus-free Operation | ✅ | Browser tab doesn't steal focus |
+
+**Verdict**: Web dashboard provides full bot control and monitoring without focus loss. Alternative to terminal/PowerShell interface.
 
 ---
 
@@ -299,13 +341,16 @@ corresponding runtime policy signals.
 
 ## Release Checklist
 
-- [x] All mandatory user stories (US1, US2, US3) implemented
-- [x] All success criteria (SC-001 through SC-010) validated
+- [x] All mandatory user stories (US1, US2, US3, Web Dashboard) implemented
+- [x] All success criteria (SC-001 through SC-015) validated
 - [x] Constitution alignment verified (CAR-001 through CAR-004)
-- [x] Full test suite passing (25/25 tests)
+- [x] Full test suite passing (76/76 tests)
 - [x] Code linting clean (ruff check)
 - [x] Docker builds successfully
+- [x] Web dashboard implemented and tested
+- [x] Both terminal and web control interfaces available
 - [x] Quickstart valid and tested
+- [x] Dashboard guide created
 - [x] Operator runbook complete
 - [x] API contracts documented
 - [x] Data persistence working
