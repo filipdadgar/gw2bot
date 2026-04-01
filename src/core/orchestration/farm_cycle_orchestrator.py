@@ -46,6 +46,8 @@ class FarmCycleOrchestrator:
         self._runtime_remount_pending = False
         self._runtime_mount_cycle_enabled = True
         self._runtime_waypoint_steering_enabled = True
+        self._runtime_gather_lock_seconds = 1.6
+        self._runtime_gather_lock_until = 0.0
         self._snapshot = RunSnapshot(
             cycle_id=None,
             route_id=None,
@@ -95,6 +97,7 @@ class FarmCycleOrchestrator:
 
         self._runtime_waypoints = self._load_route_waypoints(route_file)
         self._runtime_remount_pending = False
+        self._runtime_gather_lock_until = 0.0
 
         self._snapshot = RunSnapshot(
             cycle_id=f"cycle-{uuid4().hex[:8]}",
@@ -149,6 +152,7 @@ class FarmCycleOrchestrator:
         interval_seconds: float,
         mount_cycle_enabled: bool = True,
         waypoint_steering_enabled: bool = True,
+        gather_lock_seconds: float = 1.6,
     ) -> None:
         """Start a background loop that emits policy signals while run is active."""
 
@@ -157,6 +161,8 @@ class FarmCycleOrchestrator:
 
         self._runtime_mount_cycle_enabled = bool(mount_cycle_enabled)
         self._runtime_waypoint_steering_enabled = bool(waypoint_steering_enabled)
+        self._runtime_gather_lock_seconds = max(0.0, float(gather_lock_seconds))
+        self._runtime_gather_lock_until = 0.0
         self._runtime_stop_event.clear()
 
         def _worker() -> None:
@@ -209,8 +215,11 @@ class FarmCycleOrchestrator:
                     nav_direction_bias = self._compute_route_direction_bias(
                         step_index=self._snapshot.current_waypoint_index
                     )
+                    now_monotonic = time.monotonic()
+                    lock_active = self._is_gather_lock_active(now=now_monotonic)
                     state_features["nav_direction_bias"] = float(nav_direction_bias)
                     state_features["remount_pending"] = 1.0 if self._runtime_remount_pending else 0.0
+                    state_features["gather_lock_remaining_ms"] = self._gather_lock_remaining_ms(now=now_monotonic)
 
                     action_taken = self._select_action(
                         state_features=state_features,
@@ -224,20 +233,25 @@ class FarmCycleOrchestrator:
                             self._runtime_mount_cycle_enabled
                             and action_taken == "navigate"
                             and self._runtime_remount_pending
+                            and not lock_active
                         ):
                             self._tap_key(input_bridge=input_bridge, key="x", hold_seconds=0.06)
                             self._runtime_remount_pending = False
                             state_features["mount_action"] = "remount"
 
-                        self._execute_runtime_action(
-                            action_taken=action_taken,
-                            input_bridge=input_bridge,
-                            step_index=self._snapshot.current_waypoint_index,
-                            direction_bias=nav_direction_bias,
-                        )
+                        if lock_active and action_taken == "navigate":
+                            state_features["input_suppressed_reason"] = "gather_lock"
+                        else:
+                            self._execute_runtime_action(
+                                action_taken=action_taken,
+                                input_bridge=input_bridge,
+                                step_index=self._snapshot.current_waypoint_index,
+                                direction_bias=nav_direction_bias,
+                            )
 
                         if self._runtime_mount_cycle_enabled and action_taken in {"harvest", "interact"}:
                             self._runtime_remount_pending = True
+                            self._set_gather_lock(now=now_monotonic)
 
                     reward_proxy = max(0.0, min(1.0, float(state_features.get("contrast", 0.0)) + 0.2))
                     self.emit_runtime_policy_signal(
@@ -336,6 +350,28 @@ class FarmCycleOrchestrator:
         if dx >= 8:
             return 1
         return 0
+
+    def _set_gather_lock(self, now: float | None = None) -> None:
+        """Start or refresh the post-gather lock window."""
+
+        if self._runtime_gather_lock_seconds <= 0.0:
+            self._runtime_gather_lock_until = 0.0
+            return
+        now_value = time.monotonic() if now is None else float(now)
+        self._runtime_gather_lock_until = now_value + self._runtime_gather_lock_seconds
+
+    def _is_gather_lock_active(self, now: float | None = None) -> bool:
+        """Return True when movement/remount should be temporarily suppressed."""
+
+        now_value = time.monotonic() if now is None else float(now)
+        return now_value < self._runtime_gather_lock_until
+
+    def _gather_lock_remaining_ms(self, now: float | None = None) -> int:
+        """Return remaining gather lock time in milliseconds."""
+
+        now_value = time.monotonic() if now is None else float(now)
+        remaining = self._runtime_gather_lock_until - now_value
+        return max(0, int(remaining * 1000.0))
 
     @staticmethod
     def _load_route_waypoints(route_file: Path) -> list[dict[str, int]]:

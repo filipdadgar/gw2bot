@@ -184,6 +184,9 @@ recommendations for valid state input.
 - **FR-022**: System MUST support a mount/travel/gather/remount runtime control
   flow with route-biased steering so navigation behavior follows discovered path
   direction more closely than straight-line forward taps.
+- **FR-023**: System MUST support a configurable post-gather lock window that
+  suppresses movement/remount inputs briefly so harvesting interactions are not
+  interrupted by immediate travel actions.
 
 ### Constitution Alignment Requirements *(mandatory)*
 
@@ -265,6 +268,9 @@ recommendations for valid state input.
 - **SC-017**: During active runtime with mount cycle enabled, telemetry shows
   remount transitions after gather interactions and navigation emits non-zero
   direction bias events derived from persisted route waypoints.
+- **SC-018**: During active runtime, gather interactions produce a measurable
+  lock window (`gather_lock_remaining_ms`) and movement suppression events while
+  lock is active, reducing gather interruption frequency.
 
 ## Assumptions
 

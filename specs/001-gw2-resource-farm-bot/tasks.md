@@ -201,6 +201,10 @@
 - [X] T094 [P] Add runtime settings and endpoint wiring for mount cycle and waypoint steering flags in src/config/settings.py, src/api/main.py, and src/api/routes/run.py
 - [X] T095 [P] Add unit tests for waypoint steering and updated navigation action patterns in tests/unit/test_runtime_waypoint_steering.py and tests/unit/test_runtime_action_execution.py
 - [X] T096 Update quickstart, dashboard docs, README, and validation/spec artifacts for mount-cycle navigation flow
+- [X] T097 Implement configurable gather lock window and suppression telemetry in src/core/orchestration/farm_cycle_orchestrator.py
+- [X] T098 [P] Add runtime setting and endpoint wiring for gather lock duration in src/config/settings.py, src/api/main.py, src/api/routes/run.py, and .env.example
+- [X] T099 [P] Add unit tests for gather lock timing helpers in tests/unit/test_runtime_gather_lock.py and settings coverage in tests/unit/test_settings_training_flags.py
+- [X] T100 Update quickstart/dashboard/spec/validation artifacts for gather lock behavior and operator visibility
 
 ---
 

@@ -149,6 +149,7 @@ Mission defaults in `.env` already enable:
 3. Runtime input execution through host bridge
 4. Continuous in-app retraining
 5. Mount-cycle remount behavior and waypoint steering bias
+6. Post-gather lock window to avoid movement interrupting harvest
 
 Step-by-step:
 
@@ -197,6 +198,12 @@ Optional validation for mount-cycle pathing behavior:
   `-1`, `0`, or `1` based on route waypoint deltas.
 - After gather actions, a subsequent navigate step should include
   `state_features.mount_action=remount` before travel continues.
+
+Optional validation for gather lock behavior:
+- After gather interactions, `state_features.gather_lock_remaining_ms` should be
+  non-zero for a short window.
+- While lock is active, movement input may be suppressed with
+  `state_features.input_suppressed_reason=gather_lock`.
 
 5. Operator control calls (if needed):
 

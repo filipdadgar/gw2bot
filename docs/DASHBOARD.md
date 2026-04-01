@@ -32,6 +32,7 @@ Open your browser and navigate to:
 - **Prompt Visibility**: Shows whether gather prompt was detected for that step (`Prompt: yes/no`)
 - **Navigation Bias**: Shows steering bias from route waypoint direction (`Bias: -1/0/1`)
 - **Mount Events**: Shows remount transitions after gather (`Mount: remount`)
+- **Gather Lock Telemetry**: Shows temporary movement suppression window after gather (`gather_lock_remaining_ms`)
 
 ### Settings
 - **Policy Confidence Threshold**: Adjust from 0.0 to 1.0
@@ -85,6 +86,7 @@ GW2_RUNTIME_POLICY_ENABLED=true
 GW2_RUNTIME_INPUT_ENABLED=true
 GW2_RUNTIME_MOUNT_CYCLE_ENABLED=true
 GW2_RUNTIME_WAYPOINT_STEERING_ENABLED=true
+GW2_RUNTIME_GATHER_LOCK_SECONDS=1.6
 GW2_TRAINING_AUTO_RETRAIN_ENABLED=true
 GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7
 ```

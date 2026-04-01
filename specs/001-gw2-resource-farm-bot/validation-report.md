@@ -267,6 +267,27 @@ direction bias events derived from persisted route waypoints.
 
 ---
 
+### SC-018: Gather Lock Anti-Interruption Window ✅
+
+**Requirement**: During active runtime, gather interactions produce a measurable
+lock window (`gather_lock_remaining_ms`) and movement suppression events while
+lock is active, reducing gather interruption frequency.
+
+**Validation**:
+- Runtime now applies configurable gather lock duration after gather actions.
+- During lock, movement navigation input is suppressed and telemetry can include
+  `state_features.input_suppressed_reason=gather_lock`.
+- Runtime exports `state_features.gather_lock_remaining_ms` for operator
+  observability.
+- Runtime setting added:
+  - `GW2_RUNTIME_GATHER_LOCK_SECONDS`
+- Unit tests validate lock helper behavior:
+  - `tests/unit/test_runtime_gather_lock.py`
+
+**Status**: ✅ PASS
+
+---
+
 ## Feature Completeness
 
 ### User Story 1: Discover and Run (P1) ✅
@@ -359,6 +380,19 @@ direction bias events derived from persisted route waypoints.
 
 ---
 
+### Gather Lock Anti-Interruption Behavior ✅
+
+| Component | Status | Tests |
+|-----------|--------|-------|
+| Gather Lock Window | ✅ | `test_runtime_gather_lock.py` |
+| Lock Remaining Telemetry | ✅ | runtime `state_features.gather_lock_remaining_ms` |
+| Movement Suppression During Lock | ✅ | runtime `state_features.input_suppressed_reason` |
+| Gather Lock Config Flag | ✅ | `test_settings_training_flags.py` |
+
+**Verdict**: Gather actions now have a protected window that reduces interruption from immediate movement/remount input.
+
+---
+
 ## Deployment Readiness
 
 ### Docker Containerization ✅
@@ -411,7 +445,7 @@ direction bias events derived from persisted route waypoints.
 ## Release Checklist
 
 - [x] All mandatory user stories (US1, US2, US3, Web Dashboard) implemented
-- [x] All success criteria (SC-001 through SC-017) validated
+- [x] All success criteria (SC-001 through SC-018) validated
 - [x] Constitution alignment verified (CAR-001 through CAR-004)
 - [x] Full test suite passing (76/76 tests)
 - [x] Code linting clean (ruff check)

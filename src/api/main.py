@@ -77,6 +77,7 @@ def _startup_autostart_run(app: FastAPI) -> None:
         input_enabled=bool(settings.gw2_runtime_input_enabled),
         mount_cycle_enabled=bool(settings.gw2_runtime_mount_cycle_enabled),
         waypoint_steering_enabled=bool(settings.gw2_runtime_waypoint_steering_enabled),
+        gather_lock_seconds=float(settings.gw2_runtime_gather_lock_seconds),
         policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
         interval_seconds=interval_seconds,
     )
