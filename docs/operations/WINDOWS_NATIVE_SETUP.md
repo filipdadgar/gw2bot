@@ -84,10 +84,17 @@ Copy the example environment file:
 Copy-Item .env.example .env
 ```
 
+Because `.env.example` is shared with Docker, update the data path for native Windows:
+
+```powershell
+(Get-Content .env) -replace '^GW2_DATA_DIR=.*', 'GW2_DATA_DIR=data' | Set-Content .env
+```
+
 This creates a `.env` file with mission-mode defaults already enabled:
 - **Auto-start runs**: `GW2_AUTOSTART_RUN_ENABLED=true` ✅
 - **Auto-retrain**: `GW2_TRAINING_AUTO_RETRAIN_ENABLED=true` ✅
 - **Runtime policy**: `GW2_RUNTIME_POLICY_ENABLED=true` ✅
+- **Native data path**: `GW2_DATA_DIR=data` ✅
 
 You can edit `.env` in Notepad if you need to adjust values, but defaults are production-ready.
 
