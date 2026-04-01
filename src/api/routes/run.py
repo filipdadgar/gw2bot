@@ -54,6 +54,7 @@ def start_run(payload: StartRunRequest, request: Request) -> dict[str, object]:
             mount_cycle_enabled=bool(settings.gw2_runtime_mount_cycle_enabled),
             waypoint_steering_enabled=bool(settings.gw2_runtime_waypoint_steering_enabled),
             gather_lock_seconds=float(settings.gw2_runtime_gather_lock_seconds),
+            gather_prompt_latch_seconds=float(settings.gw2_runtime_gather_prompt_latch_seconds),
             policy_min_confidence=float(settings.gw2_runtime_policy_min_confidence),
             interval_seconds=interval_seconds,
         )

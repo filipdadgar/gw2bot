@@ -48,6 +48,8 @@ class FarmCycleOrchestrator:
         self._runtime_waypoint_steering_enabled = True
         self._runtime_gather_lock_seconds = 1.6
         self._runtime_gather_lock_until = 0.0
+        self._runtime_gather_prompt_latch_seconds = 2.2
+        self._runtime_prompt_latch_until = 0.0
         self._snapshot = RunSnapshot(
             cycle_id=None,
             route_id=None,
@@ -153,6 +155,7 @@ class FarmCycleOrchestrator:
         mount_cycle_enabled: bool = True,
         waypoint_steering_enabled: bool = True,
         gather_lock_seconds: float = 1.6,
+        gather_prompt_latch_seconds: float = 2.2,
     ) -> None:
         """Start a background loop that emits policy signals while run is active."""
 
@@ -163,6 +166,8 @@ class FarmCycleOrchestrator:
         self._runtime_waypoint_steering_enabled = bool(waypoint_steering_enabled)
         self._runtime_gather_lock_seconds = max(0.0, float(gather_lock_seconds))
         self._runtime_gather_lock_until = 0.0
+        self._runtime_gather_prompt_latch_seconds = max(0.0, float(gather_prompt_latch_seconds))
+        self._runtime_prompt_latch_until = 0.0
         self._runtime_stop_event.clear()
 
         def _worker() -> None:
@@ -193,7 +198,12 @@ class FarmCycleOrchestrator:
                         frame = frame_capture.frame
                         brightness = float(frame.mean() / 255.0)
                         contrast = float(frame.std() / 255.0)
-                        gather_prompt_visible = 1.0 if detect_gather_prompt_visible(frame) else 0.0
+                        gather_prompt_now = detect_gather_prompt_visible(frame)
+                        if gather_prompt_now:
+                            self._set_gather_prompt_latch(now=time.monotonic())
+
+                        gather_prompt_visible = 1.0 if gather_prompt_now else 0.0
+                        gather_prompt_latched = 1.0 if self._is_gather_prompt_latched(now=time.monotonic()) else 0.0
                         state_features = {
                             "brightness": round(brightness, 4),
                             "contrast": round(contrast, 4),
@@ -201,6 +211,7 @@ class FarmCycleOrchestrator:
                             "frame_height": frame_capture.height,
                             "bridge_enabled": 1.0,
                             "gather_prompt_visible": gather_prompt_visible,
+                            "gather_prompt_latched": gather_prompt_latched,
                         }
                     else:
                         state_features = {
@@ -210,6 +221,7 @@ class FarmCycleOrchestrator:
                             "frame_height": 0,
                             "bridge_enabled": 0.0,
                             "gather_prompt_visible": 0.0,
+                            "gather_prompt_latched": 0.0,
                         }
 
                     nav_direction_bias = self._compute_route_direction_bias(
@@ -360,6 +372,21 @@ class FarmCycleOrchestrator:
         now_value = time.monotonic() if now is None else float(now)
         self._runtime_gather_lock_until = now_value + self._runtime_gather_lock_seconds
 
+    def _set_gather_prompt_latch(self, now: float | None = None) -> None:
+        """Keep gather intent sticky for a short window to tolerate prompt flicker."""
+
+        if self._runtime_gather_prompt_latch_seconds <= 0.0:
+            self._runtime_prompt_latch_until = 0.0
+            return
+        now_value = time.monotonic() if now is None else float(now)
+        self._runtime_prompt_latch_until = now_value + self._runtime_gather_prompt_latch_seconds
+
+    def _is_gather_prompt_latched(self, now: float | None = None) -> bool:
+        """Return True while the gather prompt latch window is active."""
+
+        now_value = time.monotonic() if now is None else float(now)
+        return now_value < self._runtime_prompt_latch_until
+
     def _is_gather_lock_active(self, now: float | None = None) -> bool:
         """Return True when movement/remount should be temporarily suppressed."""
 
@@ -419,7 +446,10 @@ class FarmCycleOrchestrator:
 
         # Deterministic safety trigger: if the on-screen gather prompt is visible,
         # prioritize harvest so runtime input executes the gather key immediately.
-        if float(state_features.get("gather_prompt_visible", 0.0)) >= 0.5:
+        if (
+            float(state_features.get("gather_prompt_visible", 0.0)) >= 0.5
+            or float(state_features.get("gather_prompt_latched", 0.0)) >= 0.5
+        ):
             return "harvest"
 
         fallback_action = "navigate"
@@ -431,8 +461,6 @@ class FarmCycleOrchestrator:
         action = str(recommendation.get("action", fallback_action))
         confidence = float(recommendation.get("confidence", 0.0))
         if confidence < policy_min_confidence:
-            return fallback_action
-        if action in {"harvest", "interact"}:
             return fallback_action
         return action
 

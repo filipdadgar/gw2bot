@@ -18,6 +18,7 @@ def test_runtime_policy_settings(monkeypatch) -> None:
     monkeypatch.setenv("GW2_RUNTIME_MOUNT_CYCLE_ENABLED", "true")
     monkeypatch.setenv("GW2_RUNTIME_WAYPOINT_STEERING_ENABLED", "true")
     monkeypatch.setenv("GW2_RUNTIME_GATHER_LOCK_SECONDS", "2.0")
+    monkeypatch.setenv("GW2_RUNTIME_GATHER_PROMPT_LATCH_SECONDS", "2.5")
     monkeypatch.setenv("GW2_RUNTIME_POLICY_MIN_CONFIDENCE", "0.8")
     monkeypatch.setenv("GW2_RUNTIME_SIGNAL_INTERVAL_MS", "250")
     get_settings.cache_clear()
@@ -29,6 +30,7 @@ def test_runtime_policy_settings(monkeypatch) -> None:
     assert settings.gw2_runtime_mount_cycle_enabled is True
     assert settings.gw2_runtime_waypoint_steering_enabled is True
     assert settings.gw2_runtime_gather_lock_seconds == 2.0
+    assert settings.gw2_runtime_gather_prompt_latch_seconds == 2.5
     assert settings.gw2_runtime_policy_min_confidence == 0.8
     assert settings.gw2_runtime_signal_interval_ms == 250
 

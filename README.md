@@ -44,6 +44,7 @@ to reduce manual API intervention during normal operation.
 - Runtime mount cycle is enabled by mission defaults (`GW2_RUNTIME_MOUNT_CYCLE_ENABLED=true`)
 - Runtime waypoint steering bias is enabled by mission defaults (`GW2_RUNTIME_WAYPOINT_STEERING_ENABLED=true`)
 - Runtime gather lock window defaults to 1.6s (`GW2_RUNTIME_GATHER_LOCK_SECONDS=1.6`)
+- Runtime gather prompt latch defaults to 2.2s (`GW2_RUNTIME_GATHER_PROMPT_LATCH_SECONDS=2.2`)
 - Runtime policy confidence gate: `GW2_RUNTIME_POLICY_MIN_CONFIDENCE=0.7`
 - Mission-mode autostart run is enabled by default (`GW2_AUTOSTART_RUN_ENABLED=true`)
 - Manual demonstration capture API: `/v1/training/demonstrations/start|record|stop`
