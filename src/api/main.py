@@ -4,12 +4,16 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 import logging
+from pathlib import Path
 import threading
 import time
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.adapters.bridge_factory import get_bridges
+from src.api.routes.dashboard import router as dashboard_router
 from src.api.routes.discovery import router as discovery_router
 from src.api.routes.run import router as run_router
 from src.api.routes.run_control import router as run_control_router
@@ -148,11 +152,24 @@ def create_app() -> FastAPI:
     app.state.input_bridge = input_bridge
     app.state.bridge_enabled = bridge_enabled
 
+    app.include_router(dashboard_router)
     app.include_router(discovery_router)
     app.include_router(run_router)
     app.include_router(run_control_router)
     app.include_router(telemetry_router)
     app.include_router(training_router)
+
+    @app.get("/")
+    def root() -> FileResponse:
+        """Serve the web dashboard at root URL."""
+        dashboard_path = Path(__file__).parent / "static" / "dashboard.html"
+        return FileResponse(dashboard_path, media_type="text/html")
+
+    @app.get("/dashboard")
+    def dashboard() -> FileResponse:
+        """Serve the web dashboard at /dashboard URL."""
+        dashboard_path = Path(__file__).parent / "static" / "dashboard.html"
+        return FileResponse(dashboard_path, media_type="text/html")
 
     @app.get("/health")
     def health() -> dict[str, str]:

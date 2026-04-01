@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GW2 Bot Control Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+
+        .status-running {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-stopped {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-paused {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: #333;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 100px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 24px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .signal-log {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .signal-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            font-size: 0.9em;
+        }
+
+        .signal-time {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .signal-action {
+            font-weight: 600;
+            color: #667eea;
+            margin: 2px 0;
+        }
+
+        .settings-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .loading {
+            display: inline-block;
+            opacity: 0.6;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .divider {
+            height: 1px;
+            background: #eee;
+            margin: 20px 0;
+        }
+
+        .wide-card {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 GW2 Bot Control</h1>
+            <p>WebUI Dashboard • No Focus Stealing</p>
+        </div>
+
+        <div id="alerts"></div>
+
+        <div class="grid">
+            <!-- Run Status Card -->
+            <div class="card">
+                <h2>Run Status</h2>
+                <div class="stat-row">
+                    <span class="stat-label">Status:</span>
+                    <span id="runStatus" class="status-badge status-stopped">Stopped</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Cycle ID:</span>
+                    <span class="stat-value" id="cycleId">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Route:</span>
+                    <span class="stat-value" id="routeId">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Waypoint:</span>
+                    <span class="stat-value" id="waypointIndex">—</span>
+                </div>
+                <div class="button-group">
+                    <button class="btn-success" onclick="startRun()">▶️ Start</button>
+                    <button class="btn-warning" id="pauseBtn" onclick="pauseRun()" disabled>⏸ Pause</button>
+                    <button class="btn-danger" onclick="stopRun()">⏹ Stop</button>
+                </div>
+            </div>
+
+            <!-- Model Status Card -->
+            <div class="card">
+                <h2>Policy Model</h2>
+                <div class="stat-row">
+                    <span class="stat-label">Latest Model:</span>
+                    <span class="stat-value" id="modelId">None</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Samples:</span>
+                    <span class="stat-value" id="sampleCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Actions Learned:</span>
+                    <span class="stat-value" id="actionCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Trained:</span>
+                    <span class="stat-value" id="trainedAt">—</span>
+                </div>
+                <div class="button-group">
+                    <button class="btn-primary" onclick="trainPolicy()">🎓 Train Now</button>
+                </div>
+            </div>
+
+            <!-- Bridge Status Card -->
+            <div class="card">
+                <h2>Host Bridge</h2>
+                <div class="stat-row">
+                    <span class="stat-label">Bridge Status:</span>
+                    <span id="bridgeStatus" class="status-badge status-stopped">Disabled</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Capture Enabled:</span>
+                    <span class="stat-value" id="captureEnabled">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Input Execution:</span>
+                    <span class="stat-value" id="inputExecutionEnabled">—</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Frame Resolution:</span>
+                    <span class="stat-value" id="frameResolution">—</span>
+                </div>
+            </div>
+
+            <!-- Settings Card -->
+            <div class="card">
+                <h2>Runtime Settings</h2>
+                <div class="chart-container">
+                    <div class="form-group">
+                        <label>Policy Confidence Threshold</label>
+                        <input type="range" id="confidenceThreshold" min="0" max="1" step="0.05" value="0.7">
+                        <small>Current: <span id="confidenceValue">0.70</span></small>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="toggle-switch">
+                        <label>Policy Runtime Enabled:</label>
+                        <label class="switch">
+                            <input type="checkbox" id="policyEnabled" onchange="updateSetting('policy')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-switch">
+                        <label>Input Execution Enabled:</label>
+                        <label class="switch">
+                            <input type="checkbox" id="inputEnabled" onchange="updateSetting('input')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-switch">
+                        <label>Auto-Retrain Enabled:</label>
+                        <label class="switch">
+                            <input type="checkbox" id="retrainEnabled" onchange="updateSetting('retrain')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Execution Log -->
+            <div class="card wide-card">
+                <h2>Recent Actions</h2>
+                <div class="signal-log" id="actionLog">
+                    <div class="signal-item">
+                        <div class="signal-time">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = `http://${window.location.hostname}:8000`;
+
+        let refreshInterval = null;
+        const REFRESH_INTERVAL = 2000;
+
+        async function fetchAPI(endpoint, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors',
+                };
+                if (body) options.body = JSON.stringify(body);
+
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                showAlert(`API Error: ${error.message}`, 'error');
+                return null;
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertsDiv = document.getElementById('alerts');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alertsDiv.appendChild(alert);
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        async function startRun() {
+            const result = await fetchAPI('/v1/run/start', 'POST', {
+                route_id: null,
+                auto_discover_if_missing: true,
+                loop_enabled: true,
+            });
+            if (result) {
+                showAlert('Run started successfully', 'success');
+                await updateStatus();
+            }
+        }
+
+        async function pauseRun() {
+            const result = await fetchAPI('/v1/run/pause', 'POST');
+            if (result) {
+                showAlert('Run paused', 'success');
+                await updateStatus();
+            }
+        }
+
+        async function stopRun() {
+            const result = await fetchAPI('/v1/run/stop', 'POST');
+            if (result) {
+                showAlert('Run stopped', 'success');
+                await updateStatus();
+            }
+        }
+
+        async function trainPolicy() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Training...';
+            
+            const result = await fetchAPI('/v1/training/policy/train', 'POST');
+            if (result) {
+                showAlert('Policy trained successfully', 'success');
+                await updateModelStatus();
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '🎓 Train Now';
+        }
+
+        async function updateStatus() {
+            const status = await fetchAPI('/v1/run/status');
+            if (!status) return;
+
+            // Update run status
+            const runStatus = document.getElementById('runStatus');
+            runStatus.textContent = status.status.toUpperCase();
+            runStatus.className = `status-badge status-${status.status}`;
+
+            document.getElementById('cycleId').textContent = status.cycle_id || '—';
+            document.getElementById('routeId').textContent = status.route_id || '—';
+            document.getElementById('waypointIndex').textContent = status.current_waypoint_index !== null ? status.current_waypoint_index : '—';
+
+            // Update button states
+            const pauseBtn = document.getElementById('pauseBtn');
+            pauseBtn.disabled = status.status !== 'running';
+            pauseBtn.textContent = status.status === 'paused' ? '▶️ Resume' : '⏸ Pause';
+            if (status.status === 'paused') {
+                pauseBtn.onclick = resumeRun;
+            } else {
+                pauseBtn.onclick = pauseRun;
+            }
+        }
+
+        async function updateModelStatus() {
+            const versions = await fetchAPI('/v1/training/policy/versions');
+            if (!versions) return;
+
+            const latest = versions.versions[0];
+            document.getElementById('modelId').textContent = latest ? latest.model_id : 'None';
+            document.getElementById('sampleCount').textContent = latest ? latest.sample_count : '0';
+            document.getElementById('actionCount').textContent = latest ? latest.action_count : '0';
+            
+            if (latest && latest.trained_at_utc) {
+                const date = new Date(latest.trained_at_utc);
+                document.getElementById('trainedAt').textContent = date.toLocaleTimeString();
+            }
+        }
+
+        async function updateActionLog() {
+            const signals = await fetchAPI('/v1/telemetry/recent-signals?limit=10');
+            if (!signals || !signals.signals) return;
+
+            const log = document.getElementById('actionLog');
+            log.innerHTML = '';
+
+            if (signals.signals.length === 0) {
+                log.innerHTML = '<div class="signal-item"><div class="signal-time">No signals yet</div></div>';
+                return;
+            }
+
+            signals.signals.forEach(signal => {
+                const time = new Date(signal.timestamp);
+                const item = document.createElement('div');
+                item.className = 'signal-item';
+                item.innerHTML = `
+                    <div class="signal-time">${time.toLocaleTimeString()}</div>
+                    <div class="signal-action">Action: ${signal.action_taken || 'none'}</div>
+                    <div>Confidence: ${(signal.confidence || 0).toFixed(2)}</div>
+                `;
+                log.appendChild(item);
+            });
+        }
+
+        async function updateHealthStatus() {
+            const health = await fetchAPI('/health');
+            if (!health) return;
+
+            const bridgeStatus = document.getElementById('bridgeStatus');
+            const isEnabled = health.host_bridge === 'enabled';
+            bridgeStatus.textContent = isEnabled ? 'ENABLED' : 'DISABLED';
+            bridgeStatus.className = `status-badge ${isEnabled ? 'status-running' : 'status-stopped'}`;
+
+            // Try to get more detailed bridge info from recent signals
+            const signals = await fetchAPI('/v1/telemetry/recent-signals?limit=1');
+            if (signals && signals.signals && signals.signals.length > 0) {
+                const signal = signals.signals[0];
+                const state = signal.state_features || {};
+                document.getElementById('captureEnabled').textContent = state.bridge_enabled === 1.0 ? '✓ Yes' : '✗ No';
+                document.getElementById('inputExecutionEnabled').textContent = state.input_executed ? '✓ Yes' : '✗ No';
+                if (state.frame_width && state.frame_height) {
+                    document.getElementById('frameResolution').textContent = `${state.frame_width}×${state.frame_height}`;
+                }
+            }
+        }
+
+        async function refreshAll() {
+            await Promise.all([
+                updateStatus(),
+                updateModelStatus(),
+                updateActionLog(),
+                updateHealthStatus(),
+            ]);
+        }
+
+        function updateSetting(setting) {
+            const checkbox = document.getElementById(`${setting}Enabled`);
+            showAlert(`${setting} setting updated (UI only - configure via .env)`, 'info');
+        }
+
+        document.getElementById('confidenceThreshold').addEventListener('input', function() {
+            document.getElementById('confidenceValue').textContent = parseFloat(this.value).toFixed(2);
+        });
+
+        // Initial load
+        async function initialize() {
+            await refreshAll();
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(refreshAll, REFRESH_INTERVAL);
+        }
+
+        initialize();
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) clearInterval(refreshInterval);
+        });
+
+        async function resumeRun() {
+            const result = await fetchAPI('/v1/run/resume', 'POST');
+            if (result) {
+                showAlert('Run resumed', 'success');
+                await updateStatus();
+            }
+        }
+    </script>
+</body>
+</html>
